@@ -406,7 +406,55 @@ Submit results.json containing exactly an outputs object with these numeric keys
 
   <section class="block">
     <div class="wrap">
-      <div class="head"><p class="label">3 · What if the check had not been there?</p><h2>One line changed, and the numbers pass</h2>
+      <div class="head"><p class="label">3 · The input file and Gmsh</p><h2>What geometry.step is, and how Gmsh reads it</h2>
+        <p class="lead">The bracket reaches the model as one file, <code>geometry.step</code>. Astra's program opened it with Gmsh, the open-source mesher in the sandbox. Here is what is inside the file and what Gmsh does with it.</p></div>
+      <div class="tables">
+        <div><p class="label">Inside geometry.step</p>
+          <p style="font-size:0.95rem">A 230 KB text file in the STEP format (ISO 10303-21), written by Open CASCADE. It does not store triangles or pixels: it describes the exact surfaces of the part, a <b>boundary representation</b>.</p>
+          <table><tbody>
+            <tr><td>1 solid</td><td><code>MANIFOLD_SOLID_BREP</code> → one <code>CLOSED_SHELL</code></td></tr>
+            <tr><td>24 faces</td><td>18 flat (feet, seat, sides), 4 cylinders (bolt holes), <b>2 B-spline surfaces</b> (the two curved arms)</td></tr>
+            <tr><td>60 edges, 40 corners</td><td>lines and B-spline curves joining the faces</td></tr>
+            <tr><td>each arm</td><td>a B-spline surface set by a 6 × 9 grid of <b>control points</b> (degree 2 by 8)</td></tr></tbody></table>
+          <pre class="json" style="margin-top:8px">ISO-10303-21;
+FILE_DESCRIPTION(('Open CASCADE Model'),'2;1');
+…
+#105 = MANIFOLD_SOLID_BREP('',#106);
+#106 = CLOSED_SHELL('',(#107,#227,#303,#720, …));
+#107 = ADVANCED_FACE('',(#108),#122,.F.);
+…  1 822 CARTESIAN_POINTs, 60 EDGE_CURVEs, 24 ADVANCED_FACEs</pre></div>
+        <div><p class="label">What Gmsh does with it</p>
+          <ol class="did" style="font-size:0.95rem">
+            <li><b>Import.</b> Gmsh hands the file to its OpenCASCADE kernel, which rebuilds the exact shape. Gmsh then sees numbered entities by dimension: 40 points, 64 curves, 24 surfaces, 1 volume.</li>
+            <li><b>Quick size.</b> <code>getBoundingBox(3, tag)</code> asks OpenCASCADE for a fast box around the volume. For a B-spline surface it boxes the <b>control points</b>, not the surface. This is the call Astra's check used.</li>
+            <li><b>Mesh, in order of dimension.</b> First the curves are cut into segments (1D), then the surfaces into triangles (2D), then the volume into tetrahedra (3D).</li>
+            <li><b>Curved elements.</b> <code>setOrder(2)</code> adds a node in the middle of every edge and moves it onto the exact CAD surface, so elements follow the curved arms. If an element is large compared with the curvature, this move can fold it inside out.</li>
+            <li><b>Exact size, if asked.</b> With the option <code>Geometry.OCCBoundsUseStl = 1</code>, Gmsh measures the box from the surface itself and returns exactly z = 0 to 189 mm.</li>
+          </ol></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="head"><p class="label">4 · The math, without any tolerance</p><h2>Why the check had to fail</h2>
+        <p class="lead">This failure is not about a band being too strict. Both of Astra's bugs follow from the math of the geometry, and each gives a yes-or-no answer.</p></div>
+      <div class="limits">
+        <article><h3>The control-point hull</h3>
+          <p>A B-spline surface is S(u, v) = Σ N<sub>i</sub>(u)·N<sub>j</sub>(v)·P<sub>ij</sub>, where the P<sub>ij</sub> are control points and the weights N are never negative and always add up to 1. So every point of the surface is a weighted average of the control points, and lies inside their convex hull. A box around the control points therefore always contains the surface, but is usually bigger.</p></article>
+        <article><h3>The numbers in this file</h3>
+          <p>The arms' control points reach z = −1.392 mm and y = −64.833 mm: exactly the numbers in Astra's error message. The arm surfaces themselves start at z = 18.0 mm and y = −23.6 mm, and the whole part at z = 0 and y = −40 mm. Comparing an outer box with exact numbers to 0.0001 mm was bound to fail for this file. Any tolerance under 1.39 mm fails the same way.</p></article>
+        <article><h3>The inside-out element</h3>
+          <p>Each element maps a perfect reference tetrahedron onto the part: x(ξ) = Σ N<sub>a</sub>(ξ)·x<sub>a</sub>. The stiffness is an integral weighted by det J, the determinant of ∂x/∂ξ, which is the local volume ratio. It must be positive everywhere. When moving mid-edge nodes onto the curved arm folds an element, det J ≤ 0: negative volume, and CalculiX stops with "nonpositive jacobian".</p></article>
+        <article><h3>So: logic errors, not accuracy</h3>
+          <p>Neither bug is a number slightly off. The first compares a guaranteed over-estimate with exact values; the second builds an element with negative volume. Each is a yes-or-no fact about the program, true for any tolerance on the answer.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="head"><p class="label">5 · What if the check had not been there?</p><h2>One line changed, and the numbers pass</h2>
         <p class="lead">We reran Astra's own program in the same sandbox with the same limits, changing only the line that raises the error (to <code>pass</code>). Nothing else was touched.</p></div>
       <div class="tbl"><table><thead><tr><th>Value</th><th>Astra's program, check removed</th><th>Reference</th><th>Error</th><th>Band</th></tr></thead><tbody>
         <tr><td>Seat sinks, on average</td><td class="num">0.0962 mm</td><td class="num">0.0984 mm</td><td class="num ok">−2.2 %</td><td class="num">±10 %</td></tr>
@@ -418,7 +466,7 @@ Submit results.json containing exactly an outputs object with these numeric keys
 
   <section class="block">
     <div class="wrap">
-      <div class="head"><p class="label">4 · How it was scored</p><h2>No answer</h2></div>
+      <div class="head"><p class="label">6 · How it was scored</p><h2>No answer</h2></div>
       <div class="tbl"><table><thead><tr><th>Check</th><th>Result</th></tr></thead><tbody>
         <tr><td>Program ran offline</td><td class="hit">stopped after 0.45 s with its own error (exit code 1)</td></tr>
         <tr><td><code>results.json</code></td><td class="hit">missing → no answer</td></tr>
@@ -435,7 +483,7 @@ Submit results.json containing exactly an outputs object with these numeric keys
 
   <section class="block">
     <div class="wrap">
-      <div class="head"><p class="label">5 · Possible limitations</p><h2>What this one case does not prove</h2></div>
+      <div class="head"><p class="label">7 · Possible limitations</p><h2>What this one case does not prove</h2></div>
       <div class="limits">
         <article><h3>One try, no feedback</h3><p>Astra wrote its program blind. Seeing the error message once might well have been enough to fix it: our one-line change shows how small the fix is.</p></article>
         <article><h3>One sample</h3><p>We ran this task once. Another sample could skip the size check or use a looser tolerance and pass.</p></article>

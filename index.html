@@ -513,6 +513,12 @@ pre.json .c { color: var(--ink-3); }
         <details class="tableview"><summary>Show as a table</summary><div class="tbl" id="viz-table"></div></details>
       </div>
 
+      <div class="viz" style="margin-top:24px">
+        <div class="head" style="margin:0"><h3>Does the verdict depend on the tolerance?</h3>
+          <p class="lead" style="font-size:0.98rem">No. Widen the pass band and almost every failure stays a failure. The 21 runs with no answer fail at any band. The 30 wrong numbers were 1.6 to 9.0 times the reference. They are not inaccurate values: in all 30, Astra's own solver file at 10 % load finds a lower first mode equal to the reference, and in 27 the value Astra reported appears in that same list as mode 2, 3 or 5. <a href="case-study.html">Case 1</a> proves it for one task by counting modes, with no tolerance at all.</p></div>
+        <div class="tbl"><table><thead><tr><th>Pass band</th><th>±5 %</th><th>±10 %</th><th>±20 %</th><th>±50 %</th><th>±60 %</th><th>±100 %</th><th>±200 %</th><th>±500 %</th></tr></thead>
+          <tbody><tr><td>Astra failures still failing (of 51)</td><td class="num">51</td><td class="num">51</td><td class="num">51</td><td class="num">51</td><td class="num">51</td><td class="num">50</td><td class="num">43</td><td class="num">32</td></tr></tbody></table></div>
+      </div>
       <div class="mech">
         <article><b>30</b><p class="label">wrong number, unchecked</p><p>The setup was right, but it trusted the solver's first printed answer, which was a skipped buckling mode.</p></article>
         <article><b>20</b><p class="label">its own code failed</p><p>Mesh errors, file-format mistakes, a crash in its own post-processing. No answer came out.</p></article>

@@ -436,7 +436,39 @@ Submit results.json containing exactly an outputs object with this numeric key, 
 
   <section class="block">
     <div class="wrap">
-      <div class="head"><p class="label">5 · How it was scored</p><h2>Wrong number, silent</h2></div>
+      <div class="head"><p class="label">5 · The math, without any tolerance</p><h2>Why 0.870 is wrong whatever band you pick</h2>
+        <p class="lead">The ±5 % band says how close is close enough. This failure does not depend on it: 0.870 is not an inaccurate value of the first buckling factor, it is a different buckling factor. Four checks show this.</p></div>
+      <div class="limits">
+        <article><h3>1. The definition: the smallest one</h3>
+          <p>Linear buckling solves (K + λ·K<sub>G</sub>)·φ = 0, where K is the stiffness and K<sub>G</sub> the effect of the load. λ₁ is the <b>smallest</b> positive λ. Equivalently, λ₁ = min over all shapes φ of R(φ) = φᵀKφ / (−φᵀK<sub>G</sub>φ) (the Rayleigh quotient). So if any shape gives R below 0.870, then 0.870 cannot be λ₁. The first mode found at reduced load gives R = 0.379.</p></article>
+        <article><h3>2. Counting modes (no eigen-solver needed)</h3>
+          <p>Factor the matrix K − s·(−K<sub>G</sub>) as LDLᵀ. By Sylvester's law of inertia, the number of negative entries in D equals the number of buckling factors below s. This is the Sturm check industrial solvers use. On our own model of this plate it gives <b>exactly 4 modes below 0.870</b>, so Astra's answer is mode 5. The result is a whole number: no tolerance is involved.</p></article>
+        <article><h3>3. The scaling law</h3>
+          <p>K does not depend on the load and K<sub>G</sub> is proportional to it, so multiplying the load by α divides every λ by α, exactly. CalculiX broke this law: at the full load its first factor was 0.870; at 10 % load it was 3.790, i.e. 0.379 at full load. A correct solver must give the same answer both ways. The value 0.8701205 appears in both runs, as mode 1 and as mode 5, so the four lower modes were <b>missed</b>, not miscomputed.</p></article>
+        <article><h3>4. A hand formula</h3>
+          <p>Plate theory: buckling stress = k · π²E / (12(1 − ν²)) · (t/b)² ≈ 25.8 · k MPa for this plate, with k ≈ 4 for a plate twice as long as wide. That puts λ₁ near 0.38. Astra's 0.870 needs k ≈ 9.5. No textbook support condition for this plate gets close to that.</p></article>
+      </div>
+      <div class="tables">
+        <div><p class="label">Mode count on our model (Sturm check)</p>
+          <table><thead><tr><th>Shift s (load factor)</th><th>Modes below s</th></tr></thead><tbody>
+            <tr><td class="num">0.375</td><td class="num">0</td></tr><tr><td class="num">0.385</td><td class="num ok">1 ← first mode between these</td></tr>
+            <tr><td class="num">0.47</td><td class="num">2</td></tr><tr><td class="num">0.56</td><td class="num">3</td></tr><tr><td class="num">0.68</td><td class="num">4</td></tr>
+            <tr><td class="num">0.86</td><td class="num">4</td></tr><tr><td class="num">0.875</td><td class="num hit">5 ← Astra's 0.870 is the 5th</td></tr></tbody></table>
+          <p style="font-size:0.82rem;color:var(--ink-3)">FEniCSx, quadratic tetrahedra (4.8 mm, 14 762 elements), MUMPS LDLᵀ inertia. Script: <code>scripts/buckle_traps/sturm_count.py</code>.</p></div>
+        <div><p class="label">Two independent models, mode by mode</p>
+          <table><thead><tr><th>Mode</th><th>Our model (between)</th><th>Astra's own CalculiX file</th></tr></thead><tbody>
+            <tr><td>1</td><td class="num">0.375–0.385</td><td class="num ok">0.3790</td></tr><tr><td>2</td><td class="num">0.46–0.47</td><td class="num">0.4638</td></tr>
+            <tr><td>3</td><td class="num">0.55–0.56</td><td class="num">0.5568</td></tr><tr><td>4</td><td class="num">0.66–0.68</td><td class="num">0.6699</td></tr>
+            <tr><td>5</td><td class="num">0.86–0.875</td><td class="num hit">0.8701 (reported as λ₁)</td></tr><tr><td>6</td><td class="num">1.12–1.14</td><td class="num">1.1280</td></tr></tbody></table>
+          <p style="font-size:0.82rem;color:var(--ink-3)">Astra's file at 10 % load, factors scaled back to the full load.</p></div>
+      </div>
+      <p class="note" style="margin-top:20px"><b>So the band does not matter.</b> Astra's value is 2.3 times the right one. It would fail any band narrower than ±130 %, and even a wider band would only accept a number that belongs to a different buckling shape.</p>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="head"><p class="label">6 · How it was scored</p><h2>Wrong number, silent</h2></div>
       <div class="tbl"><table><thead><tr><th>Check</th><th>Result</th></tr></thead><tbody>
         <tr><td>Program ran offline</td><td>yes, 25.7 s, exit code 0</td></tr>
         <tr><td><code>results.json</code> keys</td><td>exactly <code>lambda1</code>, a finite number</td></tr>
@@ -455,7 +487,7 @@ Submit results.json containing exactly an outputs object with this numeric key, 
 
   <section class="block">
     <div class="wrap">
-      <div class="head"><p class="label">6 · Possible limitations</p><h2>What this one case does not prove</h2></div>
+      <div class="head"><p class="label">7 · Possible limitations</p><h2>What this one case does not prove</h2></div>
       <div class="limits">
         <article><h3>One try, no feedback</h3><p>Astra wrote its program blind and never saw the solver output. With a chance to look and fix, it might have caught the error. In earlier runs with feedback it did recover on some tasks.</p></article>
         <article><h3>One sample</h3><p>We ran each task once. Running Astra again could give a different program and a different answer.</p></article>
