@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Astra Failure Case</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: a drafting sheet. Content sits on a ruled sheet, the header rule carries zone ticks, and a title block closes the page. */
+:root {
+  --paper: #F2F4F6; --sheet: #FFFFFF; --ink: #0F1A2A; --ink-2: #485567; --ink-3: #6B7787;
+  --rule: #D3DAE2; --rule-2: #E7ECF1; --accent: #1B56C4; --accent-ink: #FFFFFF; --accent-soft: #E4ECFA;
+  --good: #0CA30C; --warn: #FAB219; --crit: #D03B3B; --neutral: #8C96A4;
+  --mode-neg: #2563C9; --mode-mid: #E8ECF1; --mode-pos: #C8412F;
+  --display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --wrap: 1120px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0C131D; --sheet: #121C29; --ink: #E5EAF0; --ink-2: #A7B2C1; --ink-3: #7E8A9A;
+    --rule: #263347; --rule-2: #1A2534; --accent: #7EA8F4; --accent-ink: #0C131D; --accent-soft: #1A2942;
+    --mode-neg: #5B8DE8; --mode-mid: #2A3546; --mode-pos: #E2705E; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0C131D; --sheet: #121C29; --ink: #E5EAF0; --ink-2: #A7B2C1; --ink-3: #7E8A9A;
+  --rule: #263347; --rule-2: #1A2534; --accent: #7EA8F4; --accent-ink: #0C131D; --accent-soft: #1A2942;
+  --mode-neg: #5B8DE8; --mode-mid: #2A3546; --mode-pos: #E2705E; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: calc(64px + env(safe-area-inset-top, 0px)); }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body { background: var(--paper); color: var(--ink); font: 400 16px/1.6 var(--body); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--sheet); }
+a { color: var(--accent); text-underline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+.wrap { max-width: var(--wrap); margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { font-family: var(--display); font-weight: 600; line-height: 1.05; text-wrap: balance; margin: 0; letter-spacing: 0.005em; }
+h2 { font-size: clamp(2rem, 4.2vw, 2.8rem); }
+h3 { font-size: 1.55rem; }
+p { margin: 0; }
+.label { font: 500 0.72rem/1.2 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+.lead { font-size: 1.1rem; color: var(--ink-2); max-width: 62ch; }
+.mono { font-family: var(--mono); }
+code { font: 0.88em var(--mono); background: var(--rule-2); padding: 0.1em 0.35em; border-radius: 4px; }
+
+/* header */
+.site { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--sheet); border-bottom: 1px solid var(--rule); }
+.site .wrap { display: flex; align-items: center; gap: 24px; min-height: 60px; }
+.brand { display: flex; align-items: baseline; gap: 8px; text-decoration: none; color: var(--ink); flex: none; }
+.brand b { font: 700 1.45rem/1 var(--display); letter-spacing: 0.02em; }
+.brand span { font: 500 0.72rem var(--mono); color: var(--ink-3); }
+.site nav { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; min-width: 0; margin-left: auto; }
+.site nav a { font: 500 0.82rem var(--mono); letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-2); text-decoration: none; padding: 8px 10px; border-radius: 6px; white-space: nowrap; }
+.site nav a:hover { color: var(--ink); background: var(--rule-2); }
+.zones { height: 8px; background: repeating-linear-gradient(90deg, var(--rule) 0 1px, transparent 1px 12.5%); border-bottom: 1px solid var(--rule); }
+
+/* hero */
+.hero .wrap { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr); gap: 48px; align-items: center; padding-block: 56px 40px; }
+.hero h1 { font-size: clamp(2.6rem, 6.4vw, 4.6rem); font-weight: 700; margin-top: 14px; }
+.hero .lead { margin-top: 20px; }
+.cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; font: 600 0.95rem var(--body); padding: 11px 18px; border-radius: 8px; text-decoration: none; border: 1px solid var(--accent); cursor: pointer; }
+.btn.primary { background: var(--accent); color: var(--accent-ink); }
+.btn.ghost { background: transparent; color: var(--accent); }
+.btn:hover { filter: brightness(1.08); }
+.figure { background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; padding: 16px; min-width: 0; }
+.figure canvas { display: block; width: 100%; aspect-ratio: 16 / 10; max-width: 100%; }
+.figure .cap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 16px; align-items: center; margin-top: 10px; }
+.figure .cap p { font-size: 0.84rem; color: var(--ink-2); }
+.legend-bar { display: grid; grid-template-columns: auto 120px auto; align-items: center; gap: 8px; font: 0.72rem var(--mono); color: var(--ink-3); }
+.legend-bar i { height: 8px; border-radius: 2px; background: linear-gradient(90deg, var(--mode-neg), var(--mode-mid), var(--mode-pos)); }
+.stats { border-block: 1px solid var(--rule); background: var(--sheet); }
+.stats dl { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); margin: 0; }
+.stats div { padding: 18px 16px; border-left: 1px solid var(--rule-2); }
+.stats div:first-child { border-left: 0; padding-left: 0; }
+.stats dt { font: 700 2.1rem/1 var(--display); font-variant-numeric: tabular-nums; }
+.stats dd { margin: 6px 0 0; font-size: 0.86rem; color: var(--ink-2); }
+
+/* sections */
+section.block { padding-block: 72px 24px; }
+.head { display: grid; gap: 12px; margin-bottom: 32px; }
+.gloss { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.gloss article { background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px; padding: 20px; display: grid; gap: 8px; align-content: start; }
+.gloss h3 { font-size: 1.4rem; }
+.gloss p { color: var(--ink-2); font-size: 0.95rem; }
+.example { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); gap: 24px; margin-top: 40px; align-items: start; }
+.panel { background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; min-width: 0; }
+.tabs { display: flex; gap: 4px; padding: 8px 8px 0; border-bottom: 1px solid var(--rule); }
+.tabs button { font: 500 0.88rem var(--body); color: var(--ink-2); background: none; border: 0; border-bottom: 2px solid transparent; padding: 10px 12px; cursor: pointer; }
+.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+.tabpanel { padding: 20px; }
+.plain-ex { display: grid; gap: 14px; }
+.plain-ex p { font-size: 1.02rem; }
+.plain-ex .q { border-left: 3px solid var(--accent); padding-left: 14px; font-weight: 500; }
+.ask { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 16px; font-size: 0.92rem; margin: 0; }
+.ask dt { color: var(--ink-3); font: 500 0.76rem/1.9 var(--mono); text-transform: uppercase; letter-spacing: 0.06em; }
+.ask dd { margin: 0; }
+pre.prompt { margin: 0; font: 0.8rem/1.55 var(--mono); white-space: pre-wrap; word-break: break-word; max-height: 420px; overflow: auto; color: var(--ink-2); }
+ol.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; counter-reset: s; }
+ol.steps li { counter-increment: s; display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 12px; padding: 16px 20px; border-top: 1px solid var(--rule-2); }
+ol.steps li:first-child { border-top: 0; }
+ol.steps li::before { content: counter(s); font: 700 1.6rem/1 var(--display); color: var(--accent); }
+ol.steps b { display: block; font-weight: 600; }
+ol.steps span { color: var(--ink-2); font-size: 0.93rem; }
+.note { margin-top: 20px; padding: 16px 20px; background: var(--accent-soft); border-radius: 10px; font-size: 0.95rem; }
+
+/* task explorer */
+.filters { position: sticky; top: calc(60px + env(safe-area-inset-top, 0px)); z-index: 5; background: var(--paper); padding-block: 12px; border-bottom: 1px solid var(--rule); display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.filters input, .filters select { font: 0.9rem var(--body); color: var(--ink); background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; padding: 9px 10px; min-width: 0; }
+.filters input { flex: 1 1 220px; }
+.filters select { flex: 0 1 auto; max-width: 100%; }
+.filters button { font: 500 0.85rem var(--body); color: var(--accent); background: none; border: 0; cursor: pointer; padding: 8px; }
+.count { font: 0.82rem var(--mono); color: var(--ink-3); width: 100%; }
+.group { margin-top: 36px; }
+.group > header { display: grid; gap: 8px; margin-bottom: 16px; }
+.group > header p { color: var(--ink-2); max-width: 75ch; font-size: 0.95rem; }
+.cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.card { background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; padding: 20px; display: grid; gap: 12px; align-content: start; min-width: 0; }
+.card .top { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.card h3 { font-size: 1.45rem; }
+.card .n { font: 0.78rem var(--mono); color: var(--ink-3); white-space: nowrap; }
+.card .story { color: var(--ink-2); font-size: 0.93rem; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font: 500 0.72rem/1 var(--mono); letter-spacing: 0.03em; padding: 5px 8px; border-radius: 999px; border: 1px solid var(--rule); color: var(--ink-2); white-space: nowrap; }
+.refline { font-size: 0.84rem; color: var(--ink-3); }
+.refline b { color: var(--ink-2); font-weight: 500; }
+.rows { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule-2); }
+.rows li + li { border-top: 1px solid var(--rule-2); }
+.rows button { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; align-items: center; text-align: left; background: none; border: 0; padding: 10px 4px; cursor: pointer; color: var(--ink); font: inherit; }
+.rows button:hover { background: var(--rule-2); }
+.rows .t { font-size: 0.92rem; }
+.rows .id { grid-column: 1; font: 0.72rem var(--mono); color: var(--ink-3); overflow-wrap: anywhere; }
+.rows .pill { grid-column: 2; grid-row: 1 / span 2; }
+.more { justify-self: start; font: 500 0.85rem var(--body); color: var(--accent); background: none; border: 0; cursor: pointer; padding: 4px 0; }
+.pill { display: inline-flex; align-items: center; gap: 6px; font: 500 0.74rem/1 var(--body); color: var(--ink-2); white-space: nowrap; }
+.pill i { width: 18px; height: 18px; border-radius: 50%; display: inline-grid; place-items: center; font: 700 0.68rem/1 var(--body); font-style: normal; color: #fff; }
+.pill.good i { background: var(--good); } .pill.crit i { background: var(--crit); } .pill.warn i { background: var(--warn); color: #3a2a00; }
+.pill.neutral i { background: var(--neutral); } .pill.empty i { background: transparent; border: 1.5px dashed var(--rule); }
+.tally { display: flex; flex-wrap: wrap; gap: 6px 14px; }
+.empty-state { padding: 40px 20px; text-align: center; color: var(--ink-2); background: var(--sheet); border: 1px dashed var(--rule); border-radius: 12px; margin-top: 24px; }
+
+/* dialog */
+dialog { width: min(780px, calc(100vw - 32px)); max-height: 86vh; padding: 0; border: 1px solid var(--rule); border-radius: 14px; background: var(--sheet); color: var(--ink); }
+dialog::backdrop { background: rgba(8, 14, 24, 0.55); }
+.dlg { display: grid; gap: 20px; padding: 24px; }
+.dlg header { display: grid; gap: 8px; padding-right: 40px; }
+.dlg h3 { font-size: 1.8rem; }
+.dlg .x { position: absolute; top: 14px; right: 14px; width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--rule); background: var(--sheet); color: var(--ink); font-size: 1.2rem; cursor: pointer; }
+.dlg section { display: grid; gap: 8px; }
+.tbl { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--rule-2); vertical-align: top; }
+th { font: 500 0.72rem var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); }
+td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+details.prompt-box { border: 1px solid var(--rule); border-radius: 10px; }
+details.prompt-box summary { cursor: pointer; padding: 10px 14px; font-weight: 500; }
+details.prompt-box pre { padding: 0 14px 14px; }
+
+/* scoring */
+.checks { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.checks article { background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px; padding: 20px; display: grid; gap: 8px; align-content: start; }
+.checks h3 { font-size: 1.35rem; }
+.checks p { font-size: 0.92rem; color: var(--ink-2); }
+.rule-line { margin-top: 20px; font-size: 1.05rem; }
+
+/* results */
+.board { margin-top: 8px; }
+.board td.empty { padding: 28px 10px; color: var(--ink-2); text-align: center; }
+.viz { margin-top: 40px; background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; padding: 24px; display: grid; gap: 18px; min-width: 0; }
+.viz-legend { display: flex; flex-wrap: wrap; gap: 8px 18px; }
+.bars { display: grid; gap: 10px; position: relative; }
+.bar-row { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 12px; align-items: center; }
+.bar-row .name { font-size: 0.9rem; text-align: right; }
+.track { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.segs { display: flex; gap: 2px; height: 22px; }
+.seg { height: 100%; min-width: 3px; cursor: default; }
+.seg:last-child { border-radius: 0 4px 4px 0; }
+.seg.good { background: var(--good); } .seg.warn { background: var(--warn); } .seg.crit { background: var(--crit); } .seg.neutral { background: var(--neutral); }
+.total { font: 500 0.85rem var(--mono); font-variant-numeric: tabular-nums; color: var(--ink-2); }
+.tip { position: absolute; pointer-events: none; background: var(--ink); color: var(--paper); font: 0.8rem/1.4 var(--body); padding: 6px 10px; border-radius: 6px; white-space: nowrap; transform: translate(-50%, -110%); }
+.mech { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 16px; }
+.mech article { background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px; padding: 20px; display: grid; gap: 6px; align-content: start; }
+.mech b { font: 700 2.6rem/1 var(--display); font-variant-numeric: tabular-nums; }
+.mech p { font-size: 0.92rem; color: var(--ink-2); }
+details.tableview summary { cursor: pointer; font-size: 0.88rem; color: var(--accent); }
+
+/* run + data */
+.run { display: grid; gap: 16px; counter-reset: r; }
+.run li { list-style: none; display: grid; gap: 8px; }
+.run ol { margin: 0; padding: 0; display: grid; gap: 20px; }
+.run li > *, .dlg > *, .dlg section > *, .head > *, .gloss > *, .card > *, .viz > * { min-width: 0; }
+.codebox { position: relative; min-width: 0; background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px; }
+.codebox pre { margin: 0; padding: 14px 92px 14px 16px; font: 0.82rem/1.6 var(--mono); overflow-x: auto; white-space: pre; }
+.codebox button { position: absolute; top: 8px; right: 8px; font: 500 0.78rem var(--body); padding: 6px 10px; border-radius: 6px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); cursor: pointer; }
+.datasets { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.datasets a { display: grid; gap: 8px; background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; padding: 20px; text-decoration: none; color: var(--ink); }
+.datasets a:hover { border-color: var(--accent); }
+.datasets h3 { font-size: 1.5rem; }
+.datasets p { color: var(--ink-2); font-size: 0.93rem; }
+.datasets .mono { color: var(--accent); font-size: 0.8rem; overflow-wrap: anywhere; }
+.fine { margin-top: 20px; font-size: 0.9rem; color: var(--ink-2); max-width: 80ch; }
+div.fine { display: grid; gap: 8px; }
+
+/* title block footer */
+footer { margin-top: 80px; border-top: 1px solid var(--rule); background: var(--sheet); }
+footer .wrap { padding-block: 24px 32px; }
+.titleblock { display: grid; grid-template-columns: 2fr repeat(4, minmax(0, 1fr)); border: 1.5px solid var(--ink); }
+.titleblock div { padding: 8px 12px; border-left: 1px solid var(--ink); display: grid; gap: 2px; min-width: 0; }
+.titleblock div:first-child { border-left: 0; }
+.titleblock b { font: 600 1.1rem var(--display); overflow-wrap: anywhere; }
+.footnote { margin-top: 14px; font: 0.78rem var(--mono); color: var(--ink-3); }
+
+@media (max-width: 900px) {
+  .hero .wrap, .example { grid-template-columns: minmax(0, 1fr); }
+  .checks { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stats dl { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .stats div:nth-child(4) { border-left: 0; padding-left: 0; }
+}
+@media (max-width: 680px) {
+  .gloss, .cards, .mech, .datasets, .checks { grid-template-columns: minmax(0, 1fr); }
+  .stats dl { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stats div { border-left: 0; padding-left: 0; }
+  .bar-row { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+  .bar-row .name { text-align: left; }
+  .titleblock { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .titleblock div { border-left: 0; border-top: 1px solid var(--ink); }
+  .titleblock div:first-child { grid-column: 1 / -1; border-top: 0; }
+  .titleblock div:nth-child(odd):not(:first-child) { border-left: 1px solid var(--ink); }
+  .site .wrap { gap: 8px; }
+  section.block { padding-block: 56px 16px; }
+}
+/* CAD pictures */
+.shot { position: relative; background: var(--paper); border-radius: 8px; aspect-ratio: 64 / 42; overflow: hidden; }
+.shot img { position: absolute; inset: 6px; width: calc(100% - 12px); height: calc(100% - 12px); max-width: none; object-fit: contain; display: block; }
+.card .shot { aspect-ratio: auto; height: 190px; }
+.dlg .shot { aspect-ratio: auto; height: 220px; }
+.shot-cap { font: 0.72rem var(--mono); color: var(--ink-3); margin-top: -4px; overflow-wrap: anywhere; }
+.gallery { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.gallery button { display: grid; gap: 8px; text-align: left; background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; padding: 12px; cursor: pointer; color: var(--ink); font: inherit; min-width: 0; }
+.gallery button:hover { border-color: var(--accent); }
+.gallery b { font: 600 1.15rem/1.1 var(--display); }
+.gallery span { font-size: 0.82rem; color: var(--ink-2); }
+.pipeline { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 8px; }
+.pipeline figure { margin: 0; background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; padding: 14px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+.pipeline figcaption { font-size: 0.9rem; color: var(--ink-2); display: grid; gap: 4px; }
+.pipeline figcaption b { color: var(--ink); font: 600 1.2rem/1.1 var(--display); }
+.ramp { display: grid; grid-template-columns: auto minmax(60px, 140px) auto; gap: 8px; align-items: center; font: 0.72rem var(--mono); color: var(--ink-3); }
+.ramp i { height: 8px; border-radius: 2px; background: linear-gradient(90deg, #E4EEFC, #86B6EF, #2A78D6, #104281, #0D2F5A); }
+.flow { margin-top: 56px; display: grid; gap: 16px; }
+@media (max-width: 900px) { .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 680px) { .pipeline { grid-template-columns: minmax(0, 1fr); } }
+/* specs */
+.io { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 2px 10px; margin: 6px 0 2px; grid-column: 1 / -1; font-size: 0.78rem; color: var(--ink-2); }
+.io dt { font: 500 0.66rem/1.7 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); }
+.io dd { margin: 0; overflow-wrap: anywhere; }
+.io code { font-size: 0.74rem; }
+.spec-table { max-height: 75vh; overflow: auto; }
+.spec-table thead th { position: sticky; top: 0; background: var(--sheet); z-index: 1; }
+.spec3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.spec3 article { background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px; padding: 20px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.spec3 h3 { font-size: 1.4rem; }
+.spec3 ul { margin: 0; padding-left: 18px; color: var(--ink-2); font-size: 0.92rem; display: grid; gap: 4px; }
+.spec-table { margin-top: 8px; background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; overflow-x: auto; }
+.spec-table table { min-width: 860px; font-size: 0.86rem; }
+.spec-table td:first-child { font-weight: 600; min-width: 150px; }
+.spec-table td ul { margin: 0; padding-left: 16px; }
+.downloads { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; align-items: center; font-size: 0.92rem; }
+.formula { font: 0.8rem var(--mono); color: var(--ink-2); }
+@media (max-width: 900px) { .spec3 { grid-template-columns: minmax(0, 1fr); } }
+/* flow */
+.flowline { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; margin: 8px 0 0; padding: 0; }
+.flowline li { list-style: none; background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px; padding: 14px; display: grid; gap: 6px; align-content: start; position: relative; min-width: 0; }
+.flowline li.solve { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.flowline li.eval { background: var(--accent-soft); }
+.flowline b { font: 600 1.15rem/1.1 var(--display); }
+.flowline span { font-size: 0.84rem; color: var(--ink-2); }
+.flowline small { font: 500 0.66rem var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); }
+.flowline ol { margin: 0; padding: 0; display: contents; }
+@media (max-width: 900px) { .flowline { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+pre.json { margin: 0; padding: 12px 14px; background: var(--paper); border-radius: 8px; font: 0.8rem/1.6 var(--mono); overflow-x: auto; white-space: pre; }
+pre.json .c { color: var(--ink-3); }
+.dlg ol.flowsteps { margin: 0; padding-left: 20px; display: grid; gap: 6px; font-size: 0.92rem; }
+.dlg ol.flowsteps li.solve { font-weight: 500; }
+</style>
+<style>
+.case-hero .wrap { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: 40px; align-items: center; padding-block: 48px 32px; }
+.case-hero h1 { font-size: clamp(2.3rem, 5.2vw, 3.8rem); font-weight: 700; margin-top: 12px; }
+.verdict { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid var(--rule); border-radius: 12px; background: var(--sheet); overflow: hidden; margin-top: 24px; }
+.verdict div { padding: 16px 18px; border-left: 1px solid var(--rule-2); display: grid; gap: 4px; }
+.verdict div:first-child { border-left: 0; }
+.verdict b { font: 700 2.2rem/1 var(--display); font-variant-numeric: tabular-nums; }
+.verdict .bad b { color: var(--crit); }
+.verdict span { font-size: 0.84rem; color: var(--ink-2); }
+.prose { display: grid; gap: 14px; max-width: 70ch; font-size: 1.02rem; }
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 20px; }
+.two figure { margin: 0; background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; padding: 14px; display: grid; gap: 10px; min-width: 0; }
+.two figure img { width: 100%; height: auto; display: block; background: var(--paper); border-radius: 8px; }
+.two figcaption { font-size: 0.9rem; color: var(--ink-2); display: grid; gap: 4px; }
+.two figcaption b { color: var(--ink); font: 600 1.2rem/1.15 var(--display); }
+.tables { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 20px; }
+.tables > div { background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; padding: 16px; min-width: 0; display: grid; gap: 8px; align-content: start; }
+td.hit { color: var(--crit); font-weight: 600; }
+td.ok { color: var(--good); font-weight: 600; }
+.checks3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 20px; }
+.checks3 article { background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px; padding: 18px; display: grid; gap: 6px; align-content: start; }
+.checks3 b { font: 700 1.9rem/1 var(--display); font-variant-numeric: tabular-nums; }
+.checks3 p { font-size: 0.9rem; color: var(--ink-2); }
+ol.did { margin: 0; padding-left: 22px; display: grid; gap: 8px; max-width: 75ch; }
+ol.did li.wrong { color: var(--crit); font-weight: 500; }
+.limits { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 16px; }
+.limits article { background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px; padding: 18px; display: grid; gap: 6px; align-content: start; }
+.limits h3 { font-size: 1.25rem; }
+.limits p { font-size: 0.92rem; color: var(--ink-2); }
+.spoiler { margin-top: 16px; padding: 12px 16px; border: 1px dashed var(--rule); border-radius: 10px; font-size: 0.9rem; color: var(--ink-2); }
+@media (max-width: 900px) { .case-hero .wrap, .two, .tables, .checks3, .limits { grid-template-columns: minmax(0, 1fr); } .verdict { grid-template-columns: minmax(0, 1fr); } .verdict div { border-left: 0; border-top: 1px solid var(--rule-2); } .verdict div:first-child { border-top: 0; } }
+</style>
+</head>
+<body>
+
+
+<header class="site">
+  <div class="wrap">
+    <a class="brand" href="index.html"><b>CADFEM-Bench</b><span>v1.9</span></a>
+    <nav aria-label="Sections">
+      <a href="index.html#parts">Parts</a><a href="index.html#how">How it works</a><a href="index.html#tasks">Tasks</a><a href="index.html#specs">Specs</a><a href="index.html#results">Results</a><a href="case-study.html" aria-current="page" style="color:var(--ink);background:var(--rule-2)">Astra failure</a>
+    </nav>
+  </div>
+</header>
+<div class="zones" aria-hidden="true"></div>
+
+<main>
+  <section class="case-hero">
+    <div class="wrap">
+      <div>
+        <p class="label">Case study · task BT-plate-08 · GPT-6 Astra</p>
+        <h1>A right setup and a wrong answer</h1>
+        <p class="lead" style="margin-top:16px">GPT-6 Astra set up this buckling problem correctly: right shape, supports, load and solver input. It still reported a number 2.3 times too high, because the solver skipped the first four answers and Astra did not check what it got.</p>
+        <div class="verdict">
+          <div class="bad"><span>Astra reported</span><b>0.870</b><span>buckling factor λ₁</span></div>
+          <div><span>Correct answer</span><b>0.379</b><span>checked three ways</span></div>
+          <div class="bad"><span>Verdict</span><b>Fail</b><span>wrong number: +130 %, band ±5 %</span></div>
+        </div>
+      </div>
+      <figure class="figure" style="margin:0">
+        <div class="shot"><img src="img/case-plate-08.webp" alt="CAD model of task BT-plate-08: a thin flat aluminium plate, 300 by 150 by 3 mm."></div>
+        <div class="cap"><p>The part: an aluminium plate, 300 × 150 × 3 mm, given to Astra as <code>analysis.step</code>.</p></div>
+      </figure>
+    </div>
+  </section>
+
+  <section class="block" style="padding-top:32px">
+    <div class="wrap">
+      <div class="head"><p class="label">1 · The task</p><h2>What was asked</h2></div>
+      <div class="prose">
+        <p>A thin aluminium plate (E = 70 000 MPa, Poisson ratio 0.33), 300 mm long, 150 mm wide and 3 mm thick. One short end is clamped. The two long edges and the far end are held so they cannot move up or down, but they can slide in the plane.</p>
+        <p>The far end is pushed along the plate with a pressure of 282.8 MPa, about 127 kN in total.</p>
+        <p style="border-left:3px solid var(--accent);padding-left:14px;font-weight:500">By what factor λ₁ must that push be multiplied for the plate to buckle? (λ₁ = 0.5 means it buckles at half the push.)</p>
+      </div>
+      <div class="tables">
+        <div><p class="label">Input</p><table><tbody>
+          <tr><td>prompt</td><td>geometry, material, supports, load, analysis type, output key</td></tr>
+          <tr><td><code>analysis.step</code></td><td>the plate as a 3D CAD file (mm)</td></tr>
+          <tr><td><code>faces.json</code></td><td>its 6 faces with area, centroid and normal</td></tr></tbody></table></div>
+        <div><p class="label">Output</p><pre class="json">{
+  "outputs": {
+    "lambda1": &lt;number&gt;   <span class="c">// first (smallest positive) buckling factor</span>
+  }
+}</pre><p style="font-size:0.88rem;color:var(--ink-2)">plus <code>main.py</code> and <code>solver.log</code>. Pass if |λ₁ − reference| / reference ≤ 5 %.</p></div>
+      </div>
+      <details class="prompt-box" style="margin-top:16px"><summary>Exact prompt Astra received</summary><pre class="prompt">Linear (eigenvalue) buckling analysis of a aluminium member: plate 300 x 150 x 3 mm. analysis.step holds the analysis geometry in millimetres (one solid). faces.json describes every face (index, type, area, centroid, normal/axis).
+Material: linear isotropic elastic, E = 70000 MPa, Poisson ratio 0.33.
+Supports: (1) all displacement components = 0 on face 1: plane, area 450.00 mm^2, centroid (0.0, 75.0, 0.0) mm, outward normal (-1.0, -0.0, -0.0). (2) displacement u_z = 0 on face 3: plane, area 900.00 mm^2, centroid (150.0, 0.0, 0.0) mm, outward normal (-0.0, -1.0, -0.0); face 4: plane, area 900.00 mm^2, centroid (150.0, 150.0, 0.0) mm, outward normal (0.0, 1.0, 0.0). (3) displacement u_z = 0 on face 2: plane, area 450.00 mm^2, centroid (300.0, 75.0, 0.0) mm, outward normal (1.0, 0.0, 0.0).
+Reference load set (load factor 1): (1) uniform traction (-282.772, 0, 0) MPa on face 2: plane, area 450.00 mm^2, centroid (300.0, 75.0, 0.0) mm, outward normal (1.0, 0.0, 0.0). No self-weight.
+Analysis: compute the linear prebuckling stress state under the reference load set, then the elastic buckling load factors lambda (eigenvalues of K + lambda K_G = 0, the whole reference load set scaled by lambda). Report the smallest positive one.
+
+Outputs:
+- lambda1 [-]: first (smallest positive) elastic buckling load factor of the reference load set
+
+Submit results.json containing exactly an outputs object with this numeric key, plus main.py and solver.log.</pre></details>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="head"><p class="label">2 · What Astra did</p><h2>Its program, step by step</h2>
+        <p class="lead">One call to GPT-6 Astra (medium reasoning, no tools, no feedback) returned one Python program. We ran it once, offline: it took 25.7 seconds. The generation cost $0.14.</p></div>
+      <ol class="did">
+        <li>Loaded <code>analysis.step</code> and found the clamped end, the long edges and the pushed end from <code>faces.json</code>. <b>Correct.</b></li>
+        <li>Built its own mesh of 20-node brick elements (CalculiX C3D20R) at three sizes: 32 × 16 × 2, 48 × 24 × 2 and 64 × 32 × 3 elements. <b>Correct.</b></li>
+        <li>Wrote a CalculiX input file: material, supports, the 282.8 MPa push, then a <code>*BUCKLE</code> step asking for 8 buckling factors. <b>Correct.</b></li>
+        <li>Ran the FEM solver, CalculiX 2.23, for each mesh. The first factor printed was 0.87096, 0.87051 and 0.87012: it changed by only 0.05 %, so the result looked converged.</li>
+        <li class="wrong">Took the first printed factor as λ₁ and wrote <code>{"outputs": {"lambda1": 0.8701205}}</code>. It never checked the number against a hand formula or a second method.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="head"><p class="label">3 · The correct answer</p><h2>0.379, checked three ways</h2></div>
+      <div class="checks3">
+        <article><p class="label">Our FEM model</p><b>0.379</b><p>FEniCSx with quadratic elements and the SLEPc eigen-solver, on three meshes (14 762, 23 411 and 36 095 elements): 0.3787, 0.3788, 0.3790.</p></article>
+        <article><p class="label">Hand formula</p><b>≈ 0.38</b><p>Plate buckling stress = k · π²E / (12(1 − ν²)) · (t/b)² ≈ 25.8 · k MPa. For this plate k ≈ 4, so it buckles near 107 MPa, which is 0.38 of the 282.8 MPa push. Astra's 0.870 would need k ≈ 9.5, far above any textbook value for this plate.</p></article>
+        <article><p class="label">Astra's own file</p><b>0.379</b><p>We reran Astra's own CalculiX file unchanged except for the load, cut to 10 %. The first factor came out as 3.7903, which is 0.3790 at the full load: the same answer.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="head"><p class="label">4 · Why it went wrong</p><h2>The solver skipped four answers</h2>
+        <p class="lead">The buckling step of CalculiX 2.23 can silently miss factors below about 1. Here the four lowest were missing, and Astra took the fifth as the first.</p></div>
+      <div class="tables">
+        <div><p class="label">What CalculiX printed for Astra (full load)</p>
+          <table><thead><tr><th>Mode</th><th>Factor</th></tr></thead><tbody>
+            <tr><td>1</td><td class="hit">0.8701 ← reported as λ₁</td></tr><tr><td>2</td><td>1.1280</td></tr><tr><td>3</td><td>1.4300</td></tr><tr><td>4</td><td>1.4416</td></tr><tr><td>…</td><td>4 more, all above 1.5</td></tr></tbody></table></div>
+        <div><p class="label">Same file at 10 % load, scaled back</p>
+          <table><thead><tr><th>Mode</th><th>Factor</th></tr></thead><tbody>
+            <tr><td>1</td><td class="ok">0.3790 ← the real λ₁</td></tr><tr><td>2</td><td>0.4638 (skipped)</td></tr><tr><td>3</td><td>0.5568 (skipped)</td></tr><tr><td>4</td><td>0.6699 (skipped)</td></tr><tr><td>5</td><td class="hit">0.8701 (Astra's answer)</td></tr><tr><td>6</td><td>1.1280</td></tr></tbody></table></div>
+      </div>
+      <div class="two">
+        <figure><img src="img/case-mode-true.webp" alt="Top view of the plate in its true first buckling shape: one bulge up and one bulge down along its length."><figcaption><b>The real first buckling shape (λ₁ = 0.379)</b>One bulge up and one down along the length: the classic shape for a plate twice as long as it is wide. Red is up, blue is down.</figcaption></figure>
+        <figure><img src="img/case-mode-astra.webp" alt="Top view of the plate in the fifth buckling shape, with several bulges along its length."><figcaption><b>The shape Astra reported (fifth mode, 0.870)</b>A higher mode with more bulges. The plate would never reach it: it buckles in the first shape at less than half this load.</figcaption></figure>
+      </div>
+      <p class="note" style="margin-top:20px"><b>Why it matters.</b> Astra's answer says the plate holds 87 % of the push before buckling. In reality it buckles at 38 %. A design checked with Astra's number would fail at less than half the load it was trusted to carry.</p>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="head"><p class="label">5 · How it was scored</p><h2>Wrong number, silent</h2></div>
+      <div class="tbl"><table><thead><tr><th>Check</th><th>Result</th></tr></thead><tbody>
+        <tr><td>Program ran offline</td><td>yes, 25.7 s, exit code 0</td></tr>
+        <tr><td><code>results.json</code> keys</td><td>exactly <code>lambda1</code>, a finite number</td></tr>
+        <tr><td><code>lambda1</code></td><td class="hit">0.870 vs 0.379: relative error +130 %, band ±5 % → wrong number</td></tr>
+        <tr><td>Files</td><td><code>results.json</code>, <code>main.py</code>, <code>solver.log</code> present</td></tr>
+        <tr><td>Verdict</td><td class="hit">Fail. Failure type: silent wrong value (it trusted the solver without a sanity check)</td></tr></tbody></table></div>
+      <div class="head" style="margin-top:32px"><h3>What would have caught it</h3></div>
+      <ul class="prose" style="padding-left:20px;margin:0">
+        <li>A hand formula for plate buckling (above): a minute of arithmetic shows 0.87 is far too high.</li>
+        <li>Rerunning the same file at a smaller load. If the factor does not scale by the same amount, modes were skipped.</li>
+        <li>A second solver. scikit-fem with SciPy was available; on the 3 trap tasks where Astra wrote its own eigen-solver, it was exact.</li>
+        <li>Asking CalculiX for more modes would not have helped: the missing ones were the lowest, not beyond the 8 it asked for.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="head"><p class="label">6 · Possible limitations</p><h2>What this one case does not prove</h2></div>
+      <div class="limits">
+        <article><h3>One try, no feedback</h3><p>Astra wrote its program blind and never saw the solver output. With a chance to look and fix, it might have caught the error. In earlier runs with feedback it did recover on some tasks.</p></article>
+        <article><h3>One sample</h3><p>We ran each task once. Running Astra again could give a different program and a different answer.</p></article>
+        <article><h3>Our wording may play a part</h3><p>Our instructions say not to use recalled published results. In seven other trap tasks Astra's logs say it used no analytical value, so it may avoid hand formulas even as a check.</p></article>
+        <article><h3>It tests one solver behaviour</h3><p>The trap depends on how CalculiX 2.23 searches for buckling factors. A model that picks another solver does not meet it, so the task tests checking habits more than physics knowledge.</p></article>
+        <article><h3>Purely elastic</h3><p>The task ignores yielding and imperfections. That is standard for this kind of check, but a real plate design would also need a yield and imperfection check.</p></article>
+        <article><h3>Reference computed by us</h3><p>The correct answer comes from our own FEM model, not from an outside source. It agrees with a hand formula and with Astra's own file at reduced load, so we trust it, but it is not independently published.</p></article>
+        <article><h3>Our sandbox, our limits</h3><p>Astra's run had 10 minutes and 6 GB of memory. Its program finished in 26 seconds, so the limits did not cause this failure, but they shape what a model can try.</p></article>
+        <article><h3>Public now</h3><p>This page shows the answer to BT-plate-08. Leave this task out when testing a model that may have seen this page or the public data.</p></article>
+      </div>
+      <p class="fine">All evidence for this case (Astra's program, its CalculiX file, the solver tables, our reference runs and the rerun) is in the <a href="https://huggingface.co/datasets/Conditiondark/astra-cadfem-failures/tree/main/astra/BT-plate-08" target="_blank" rel="noopener">failure dataset</a>. Full task spec: <a href="https://github.com/ayushdebnath012/cadfem-bench/blob/main/specs/BT-plate-08.md" target="_blank" rel="noopener">BT-plate-08.md</a>.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="titleblock">
+      <div><span class="label">Title</span><b>Case study · BT-plate-08</b></div>
+      <div><span class="label">Model</span><b>GPT-6 Astra</b></div>
+      <div><span class="label">Date</span><b>2026-10</b></div>
+      <div><span class="label">Units</span><b>mm · N · MPa</b></div>
+      <div><span class="label">Verdict</span><b>Fail</b></div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -7,6 +7,8 @@ GPT-6 Astra's first results. The site shows no reference answers.
 Live site: https://ayushdebnath012.github.io/cadfem-bench/
 
 - Benchmark data: https://huggingface.co/datasets/Conditiondark/cadfem-bench
+- One Astra failure explained step by step: [case-study.html](https://ayushdebnath012.github.io/cadfem-bench/case-study.html)
+- One spec page per task (overview, flow, input, output, evaluation): [specs/](specs/README.md)
 - Per-task input / output / metric spec: [task-specs.csv](task-specs.csv), [task-specs.json](task-specs.json)
 - Astra failure study: https://huggingface.co/datasets/Conditiondark/astra-cadfem-failures
 
