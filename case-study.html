@@ -318,6 +318,9 @@ ol.did li.wrong { color: var(--crit); font-weight: 500; }
 .limits h3 { font-size: 1.25rem; }
 .limits p { font-size: 0.92rem; color: var(--ink-2); }
 .spoiler { margin-top: 16px; padding: 12px 16px; border: 1px dashed var(--rule); border-radius: 10px; font-size: 0.9rem; color: var(--ink-2); }
+.caseswitch { display: flex; flex-wrap: wrap; gap: 8px; }
+.caseswitch a { font: 500 0.85rem var(--body); text-decoration: none; color: var(--ink-2); border: 1px solid var(--rule); border-radius: 999px; padding: 7px 14px; background: var(--sheet); }
+.caseswitch a[aria-current="page"] { color: var(--accent-ink); background: var(--accent); border-color: var(--accent); }
 @media (max-width: 900px) { .case-hero .wrap, .two, .tables, .checks3, .limits { grid-template-columns: minmax(0, 1fr); } .verdict { grid-template-columns: minmax(0, 1fr); } .verdict div { border-left: 0; border-top: 1px solid var(--rule-2); } .verdict div:first-child { border-top: 0; } }
 </style>
 </head>
@@ -328,12 +331,12 @@ ol.did li.wrong { color: var(--crit); font-weight: 500; }
   <div class="wrap">
     <a class="brand" href="index.html"><b>CADFEM-Bench</b><span>v1.9</span></a>
     <nav aria-label="Sections">
-      <a href="index.html#parts">Parts</a><a href="index.html#how">How it works</a><a href="index.html#tasks">Tasks</a><a href="index.html#specs">Specs</a><a href="index.html#results">Results</a><a href="case-study.html" aria-current="page" style="color:var(--ink);background:var(--rule-2)">Astra failure</a>
+      <a href="index.html#parts">Parts</a><a href="index.html#how">How it works</a><a href="index.html#tasks">Tasks</a><a href="index.html#specs">Specs</a><a href="index.html#results">Results</a><a href="case-study.html" aria-current="page" style="color:var(--ink);background:var(--rule-2)">Astra failures</a>
     </nav>
   </div>
 </header>
 <div class="zones" aria-hidden="true"></div>
-
+<div class="wrap" style="padding-block:16px 0"><nav class="caseswitch" aria-label="Case studies"><a href="case-study.html" aria-current="page">Case 1 · wrong number (BT-plate-08)</a><a href="case-study-2.html">Case 2 · no answer (bracket 000)</a></nav></div>
 <main>
   <section class="case-hero">
     <div class="wrap">

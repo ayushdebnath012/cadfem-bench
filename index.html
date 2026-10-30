@@ -297,7 +297,7 @@ pre.json .c { color: var(--ink-3); }
   <div class="wrap">
     <a class="brand" href="#top"><b>CADFEM-Bench</b><span>v1.9</span></a>
     <nav aria-label="Sections">
-      <a href="#parts">Parts</a><a href="#how">How it works</a><a href="#tasks">Tasks</a><a href="#specs">Specs</a><a href="#scoring">Scoring</a><a href="#results">Results</a><a href="#run">Run it</a><a href="#data">Data</a><a href="case-study.html">Astra failure</a>
+      <a href="#parts">Parts</a><a href="#how">How it works</a><a href="#tasks">Tasks</a><a href="#specs">Specs</a><a href="#scoring">Scoring</a><a href="#results">Results</a><a href="#run">Run it</a><a href="#data">Data</a><a href="case-study.html">Astra failures</a>
     </nav>
   </div>
 </header>
@@ -313,6 +313,7 @@ pre.json .c { color: var(--ink-3); }
         <div class="cta">
           <a class="btn primary" href="#tasks">Browse the 217 tasks</a>
           <a class="btn ghost" href="#how">See how a task works</a>
+          <a class="btn ghost" href="case-study.html">See how Astra failed</a>
         </div>
       </div>
       <figure class="figure" style="margin:0">
@@ -517,7 +518,7 @@ pre.json .c { color: var(--ink-3); }
         <article><b>20</b><p class="label">its own code failed</p><p>Mesh errors, file-format mistakes, a crash in its own post-processing. No answer came out.</p></article>
         <article><b>1</b><p class="label">refused to answer</p><p>Its own equilibrium check failed, so it declined to report a collapse load.</p></article>
       </div>
-      <p class="fine">See one failure explained step by step: <a href="case-study.html">Astra failure case study (BT-plate-08)</a>. Every failure was checked: when the fault turned out to be ours (a wrong prompt detail, a reference from a simpler model, a drawing that was never attached), the task is marked as a known problem and not counted against the model. Full evidence for all 51 failures is in the <a href="https://huggingface.co/datasets/Conditiondark/astra-cadfem-failures" target="_blank" rel="noopener">failure dataset</a>.</p>
+      <p class="fine">Two failures explained step by step: <a href="case-study.html">a wrong number (BT-plate-08)</a> and <a href="case-study-2.html">no answer (bracket 000)</a>. Every failure was checked: when the fault turned out to be ours (a wrong prompt detail, a reference from a simpler model, a drawing that was never attached), the task is marked as a known problem and not counted against the model. Full evidence for all 51 failures is in the <a href="https://huggingface.co/datasets/Conditiondark/astra-cadfem-failures" target="_blank" rel="noopener">failure dataset</a>.</p>
     </div>
   </section>
 
