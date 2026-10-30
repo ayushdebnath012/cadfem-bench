@@ -358,19 +358,20 @@ ol.did li.wrong { color: var(--crit); font-weight: 500; }
   <div class="wrap">
     <a class="brand" href="index.html"><b>CADFEM-Bench</b><span>v1.9</span></a>
     <nav aria-label="Sections">
-      <a href="index.html#how">Benchmark</a><a href="index.html#tasks">Tasks</a><a href="index.html#specs">Specs</a><a href="index.html#results">Results</a><a href="worked-example.html" aria-current="page" style="color:var(--ink);background:var(--rule-2)">Worked example</a><a href="case-study.html">Astra failures</a>
+      <a href="index.html#how">Benchmark</a><a href="index.html#tasks">Tasks</a><a href="index.html#specs">Specs</a><a href="index.html#results">Results</a><a href="worked-example.html" aria-current="page" style="color:var(--ink);background:var(--rule-2)">Worked examples</a><a href="case-study.html">Astra failures</a>
     </nav>
   </div>
 </header>
 <div class="zones" aria-hidden="true"></div>
+<div class="wrap" style="padding-block:16px 0"><nav class="caseswitch" aria-label="Worked examples"><a href="worked-example.html" aria-current="page">Passed run · A-GEOPINO-PLATE-1 (solved by us)</a><a href="worked-example-failed.html">Failed run · BT-plate-08 (GPT-6 Astra)</a></nav></div>
 
 <main>
   <section class="case-hero">
     <div class="wrap">
       <div>
-        <p class="label">Worked example · task A-GEOPINO-PLATE-1 · solved by us, by hand</p>
+        <p class="label">Worked example 1 · a passed run · task A-GEOPINO-PLATE-1 · solved by us, by hand</p>
         <h1>One task, from prompt to score</h1>
-        <p class="lead" style="margin-top:16px">A steel plate with a hole, fixed at one end and pushed at the other, two ways. We solved it ourselves, step by step, ran it through the benchmark's own sandbox and scorer, and explain what each step does, what comes next and why it is needed.</p>
+        <p class="lead" style="margin-top:16px">A steel plate with a hole, fixed at one end and pushed at the other, two ways. We solved it ourselves, step by step, ran it through the benchmark's own sandbox and scorer, and explain what each step does, what comes next and why it is needed. A <a href="worked-example-failed.html">failed GPT-6 Astra run</a> goes through the same steps in worked example 2.</p>
         <div class="verdict">
           <div><span>Our answers vs reference</span><b>−0.3 %</b><span>both values, band ±5 %</span></div>
           <div><span>Numbers</span><b style="color:var(--good)">Pass</b><span>score 1.0 from score.py</span></div>

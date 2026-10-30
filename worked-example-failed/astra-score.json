@@ -1,0 +1,70 @@
+{
+  "version": "unknown",
+  "run_id": "worked-failure-20261030",
+  "summary": {
+    "all": {
+      "tasks": 1,
+      "passed": 0,
+      "numerical_passed": 0,
+      "workflow_verified": 0,
+      "pass_rate": 0.0,
+      "numerical_pass_rate": 0.0,
+      "engineering_family_macro_pass_rate": 0.0
+    },
+    "track A": {
+      "tasks": 1,
+      "passed": 0,
+      "numerical_passed": 0,
+      "workflow_verified": 0,
+      "pass_rate": 0.0,
+      "numerical_pass_rate": 0.0,
+      "engineering_family_macro_pass_rate": 0.0
+    },
+    "track A / trap_benchmark": {
+      "tasks": 1,
+      "passed": 0,
+      "numerical_passed": 0,
+      "workflow_verified": 0,
+      "pass_rate": 0.0,
+      "numerical_pass_rate": 0.0,
+      "engineering_family_macro_pass_rate": 0.0
+    },
+    "engineering family / plate": {
+      "tasks": 1,
+      "passed": 0,
+      "numerical_passed": 0,
+      "workflow_verified": 0,
+      "pass_rate": 0.0,
+      "numerical_pass_rate": 0.0,
+      "engineering_family_macro_pass_rate": 0.0
+    }
+  },
+  "tasks": [
+    {
+      "task_id": "BT-plate-08",
+      "track": "A",
+      "tier": "trap_benchmark",
+      "family": "plate",
+      "engineering_family": "plate",
+      "independently_reproduced": false,
+      "passed": false,
+      "numerical_passed": false,
+      "numerical_score": 0.0,
+      "workflow_verified": false,
+      "checks": {
+        "lambda1": {
+          "ok": false,
+          "error": 1.2958324538258574
+        }
+      },
+      "errors": [
+        "missing/unsafe/empty artifact: part.step",
+        "missing/unsafe/empty artifact: mesh.msh",
+        "missing/unsafe/empty artifact: fields.npz",
+        "missing/unsafe/empty artifact: environment.json",
+        "trusted workflow review missing"
+      ]
+    }
+  ],
+  "note": "Workflow verification requires trusted external review; file presence and correct scalar answers alone never pass."
+}

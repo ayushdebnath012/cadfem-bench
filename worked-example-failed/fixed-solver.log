@@ -1,0 +1,763 @@
+Linear elastic solid buckling analysis; units N, mm, MPa.
+Material E=70000 MPa, nu=0.33; no self-weight.
+Actual STEP geometry is validated before generating a conforming structured quadratic solid mesh.
+CalculiX *BUCKLE on the initially unloaded body computes the linear reference-load stress state and solves the elastic buckling problem. The same load is independently solved with *STATIC on the selected mesh to retain reference displacements, reactions, strains and stresses. No preloading is added to the buckling load set.
+CAD face 1 -> surface 1: type=Plane, area=450, centroid=[0.0, 75.0, 3.903127820947816e-17]
+CAD face 2 -> surface 2: type=Plane, area=450, centroid=[300.0, 75.0, 3.903127820947816e-17]
+CAD face 3 -> surface 3: type=Plane, area=900, centroid=[150.0, 0.0, 3.903127820947816e-17]
+CAD face 4 -> surface 4: type=Plane, area=900, centroid=[150.0, 150.0, 3.903127820947816e-17]
+CAD face 5 -> surface 5: type=Plane, area=45000, centroid=[150.0, 75.0, -1.5]
+CAD face 6 -> surface 6: type=Plane, area=45000, centroid=[150.0, 75.0, 1.5]
+Verified STEP volume=135000 mm^3; bounds=(np.float64(0.0), np.float64(300.0), np.float64(0.0), np.float64(150.0), np.float64(-1.5), np.float64(1.5))
+Hand estimate: k*25.843 MPa; k = 4 gives lambda = 0.3656 (a lower bound for this plate)
+mesh_32_16_2: C3D20R mesh 32x16x2, 1024 elements, 6021 nodes; integrated reference Fx=-127247.4 N
+Running mesh_32_16_2_buckling; timeout=240 s
+
+--- mesh_32_16_2_buckling: full CalculiX console output ---
+OMP: Warning #179: Function Can't set size of /tmp file failed:
+
+************************************************************
+
+CalculiX Version 2.23, Copyright(C) 1998-2025 Guido Dhondt
+CalculiX comes with ABSOLUTELY NO WARRANTY. This is free
+software, and you are welcome to redistribute it under
+certain conditions, see gpl.htm
+
+************************************************************
+
+You are using an executable made on Mon Sep 28 09:19:28 2026
+ Decascading the MPC's
+
+ Determining the structure of the matrix:
+ Using up to 2 cpu(s) for setting up the structure of the matrix.
+ number of equations
+ 17029
+ number of nonzero lower triangular matrix elements
+ 1116276
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the symmetric stiffness/mass contributions.
+
+ Factoring the system of equations using the symmetric spooles solver
+ Using up to 2 cpu(s) for spooles.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the symmetric stiffness/mass contributions.
+
+ Factoring the system of equations using the symmetric spooles solver
+ Using up to 2 cpu(s) for spooles.
+
+ Calculating the buckling factors and buckling modes:
+
+sigma=1.000000,d[0]=0.870956
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+
+  The numbers below are estimated upper bounds
+
+  number of:
+
+   nodes:         6021
+   elements:         1024
+   one-dimensional elements:            0
+   two-dimensional elements:            0
+   integration points per element:            8
+   degrees of freedom per node:            3
+   layers per element:            1
+
+   distributed facial loads:            0
+   distributed volumetric loads:            0
+   concentrated loads:          133
+   single point constraints:         1034
+   multiple point constraints:            1
+   terms in all multiple point constraints:            1
+   tie constraints:            0
+   dependent nodes tied by cyclic constraints:            0
+   dependent nodes in pre-tension constraints:            0
+
+   sets:            4
+   terms in all sets:        13834
+
+   materials:            1
+   constants per material and temperature:            2
+   temperature points per material:            1
+   plastic data points per material:            0
+
+   orientations:            0
+   amplitudes:            2
+   data points in all amplitudes:            2
+   print requests:            0
+   transformations:            0
+   property cards:            0
+
+
+ STEP            1
+
+ Buckling analysis was selected
+
+
+ Job finished
+
+
+--- end console output ---
+mesh_32_16_2_buckling completed in 1.12 s
+mesh_32_16_2_buckling: computed buckling factors [(1, 0.8709558), (2, 1.129527), (3, 1.432423), (4, 1.441658), (5, 1.52035), (6, 1.583009), (7, 1.764128), (8, 1.778977)]
+Running mesh_32_16_2_buckling_low; timeout=240 s
+
+--- mesh_32_16_2_buckling_low: full CalculiX console output ---
+OMP: Warning #179: Function Can't set size of /tmp file failed:
+
+************************************************************
+
+CalculiX Version 2.23, Copyright(C) 1998-2025 Guido Dhondt
+CalculiX comes with ABSOLUTELY NO WARRANTY. This is free
+software, and you are welcome to redistribute it under
+certain conditions, see gpl.htm
+
+************************************************************
+
+You are using an executable made on Mon Sep 28 09:19:28 2026
+ Decascading the MPC's
+
+ Determining the structure of the matrix:
+ Using up to 2 cpu(s) for setting up the structure of the matrix.
+ number of equations
+ 17029
+ number of nonzero lower triangular matrix elements
+ 1116276
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the symmetric stiffness/mass contributions.
+
+ Factoring the system of equations using the symmetric spooles solver
+ Using up to 2 cpu(s) for spooles.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the symmetric stiffness/mass contributions.
+
+ Factoring the system of equations using the symmetric spooles solver
+ Using up to 2 cpu(s) for spooles.
+
+ Calculating the buckling factors and buckling modes:
+
+sigma=1.000000,d[0]=3.790592
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+
+  The numbers below are estimated upper bounds
+
+  number of:
+
+   nodes:         6021
+   elements:         1024
+   one-dimensional elements:            0
+   two-dimensional elements:            0
+   integration points per element:            8
+   degrees of freedom per node:            3
+   layers per element:            1
+
+   distributed facial loads:            0
+   distributed volumetric loads:            0
+   concentrated loads:          133
+   single point constraints:         1034
+   multiple point constraints:            1
+   terms in all multiple point constraints:            1
+   tie constraints:            0
+   dependent nodes tied by cyclic constraints:            0
+   dependent nodes in pre-tension constraints:            0
+
+   sets:            4
+   terms in all sets:        13834
+
+   materials:            1
+   constants per material and temperature:            2
+   temperature points per material:            1
+   plastic data points per material:            0
+
+   orientations:            0
+   amplitudes:            2
+   data points in all amplitudes:            2
+   print requests:            0
+   transformations:            0
+   property cards:            0
+
+
+ STEP            1
+
+ Buckling analysis was selected
+
+
+ Job finished
+
+
+--- end console output ---
+mesh_32_16_2_buckling_low completed in 1.01 s
+mesh_32_16_2_buckling_low: computed buckling factors [(1, 3.790592), (2, 4.639217), (3, 5.564233), (4, 6.701398), (5, 8.709558), (6, 11.29527), (7, 14.32423), (8, 14.41658)]
+mesh_32_16_2: first factor at full load 0.8709558; at 10 % load, scaled back 0.3790592; they disagree, so the full-load run missed lower factors.
+mesh_48_24_2: C3D20R mesh 48x24x2, 2304 elements, 13253 nodes; integrated reference Fx=-127247.4 N
+Running mesh_48_24_2_buckling; timeout=240 s
+
+--- mesh_48_24_2_buckling: full CalculiX console output ---
+OMP: Warning #179: Function Can't set size of /tmp file failed:
+
+************************************************************
+
+CalculiX Version 2.23, Copyright(C) 1998-2025 Guido Dhondt
+CalculiX comes with ABSOLUTELY NO WARRANTY. This is free
+software, and you are welcome to redistribute it under
+certain conditions, see gpl.htm
+
+************************************************************
+
+You are using an executable made on Mon Sep 28 09:19:28 2026
+ Decascading the MPC's
+
+ Determining the structure of the matrix:
+ Using up to 2 cpu(s) for setting up the structure of the matrix.
+ number of equations
+ 38213
+ number of nonzero lower triangular matrix elements
+ 2557420
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the symmetric stiffness/mass contributions.
+
+ Factoring the system of equations using the symmetric spooles solver
+ Using up to 2 cpu(s) for spooles.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the symmetric stiffness/mass contributions.
+
+ Factoring the system of equations using the symmetric spooles solver
+ Using up to 2 cpu(s) for spooles.
+
+ Calculating the buckling factors and buckling modes:
+
+sigma=1.000000,d[0]=0.870515
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+
+  The numbers below are estimated upper bounds
+
+  number of:
+
+   nodes:        13253
+   elements:         2304
+   one-dimensional elements:            0
+   two-dimensional elements:            0
+   integration points per element:            8
+   degrees of freedom per node:            3
+   layers per element:            1
+
+   distributed facial loads:            0
+   distributed volumetric loads:            0
+   concentrated loads:          197
+   single point constraints:         1546
+   multiple point constraints:            1
+   terms in all multiple point constraints:            1
+   tie constraints:            0
+   dependent nodes tied by cyclic constraints:            0
+   dependent nodes in pre-tension constraints:            0
+
+   sets:            4
+   terms in all sets:        29962
+
+   materials:            1
+   constants per material and temperature:            2
+   temperature points per material:            1
+   plastic data points per material:            0
+
+   orientations:            0
+   amplitudes:            2
+   data points in all amplitudes:            2
+   print requests:            0
+   transformations:            0
+   property cards:            0
+
+
+ STEP            1
+
+ Buckling analysis was selected
+
+
+ Job finished
+
+
+--- end console output ---
+mesh_48_24_2_buckling completed in 2.69 s
+mesh_48_24_2_buckling: computed buckling factors [(1, 0.8705149), (2, 1.128696), (3, 1.430954), (4, 1.44158), (5, 1.520406), (6, 1.582941), (7, 1.763502), (8, 1.776417)]
+Running mesh_48_24_2_buckling_low; timeout=240 s
+
+--- mesh_48_24_2_buckling_low: full CalculiX console output ---
+OMP: Warning #179: Function Can't set size of /tmp file failed:
+
+************************************************************
+
+CalculiX Version 2.23, Copyright(C) 1998-2025 Guido Dhondt
+CalculiX comes with ABSOLUTELY NO WARRANTY. This is free
+software, and you are welcome to redistribute it under
+certain conditions, see gpl.htm
+
+************************************************************
+
+You are using an executable made on Mon Sep 28 09:19:28 2026
+ Decascading the MPC's
+
+ Determining the structure of the matrix:
+ Using up to 2 cpu(s) for setting up the structure of the matrix.
+ number of equations
+ 38213
+ number of nonzero lower triangular matrix elements
+ 2557420
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the symmetric stiffness/mass contributions.
+
+ Factoring the system of equations using the symmetric spooles solver
+ Using up to 2 cpu(s) for spooles.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the symmetric stiffness/mass contributions.
+
+ Factoring the system of equations using the symmetric spooles solver
+ Using up to 2 cpu(s) for spooles.
+
+ Calculating the buckling factors and buckling modes:
+
+sigma=1.000000,d[0]=3.790345
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+
+  The numbers below are estimated upper bounds
+
+  number of:
+
+   nodes:        13253
+   elements:         2304
+   one-dimensional elements:            0
+   two-dimensional elements:            0
+   integration points per element:            8
+   degrees of freedom per node:            3
+   layers per element:            1
+
+   distributed facial loads:            0
+   distributed volumetric loads:            0
+   concentrated loads:          197
+   single point constraints:         1546
+   multiple point constraints:            1
+   terms in all multiple point constraints:            1
+   tie constraints:            0
+   dependent nodes tied by cyclic constraints:            0
+   dependent nodes in pre-tension constraints:            0
+
+   sets:            4
+   terms in all sets:        29962
+
+   materials:            1
+   constants per material and temperature:            2
+   temperature points per material:            1
+   plastic data points per material:            0
+
+   orientations:            0
+   amplitudes:            2
+   data points in all amplitudes:            2
+   print requests:            0
+   transformations:            0
+   property cards:            0
+
+
+ STEP            1
+
+ Buckling analysis was selected
+
+
+ Job finished
+
+
+--- end console output ---
+mesh_48_24_2_buckling_low completed in 2.73 s
+mesh_48_24_2_buckling_low: computed buckling factors [(1, 3.790345), (2, 4.638536), (3, 5.565401), (4, 6.69996), (5, 8.705149), (6, 11.28696), (7, 14.30954), (8, 14.4158)]
+mesh_48_24_2: first factor at full load 0.8705149; at 10 % load, scaled back 0.3790345; they disagree, so the full-load run missed lower factors.
+Observed refinement change in lambda1: 0.00651656%
+mesh_64_32_3: C3D20R mesh 64x32x3, 6144 elements, 31783 nodes; integrated reference Fx=-127247.4 N
+Running mesh_64_32_3_buckling; timeout=240 s
+
+--- mesh_64_32_3_buckling: full CalculiX console output ---
+OMP: Warning #179: Function Can't set size of /tmp file failed:
+
+************************************************************
+
+CalculiX Version 2.23, Copyright(C) 1998-2025 Guido Dhondt
+CalculiX comes with ABSOLUTELY NO WARRANTY. This is free
+software, and you are welcome to redistribute it under
+certain conditions, see gpl.htm
+
+************************************************************
+
+You are using an executable made on Mon Sep 28 09:19:28 2026
+ Decascading the MPC's
+
+ Determining the structure of the matrix:
+ Using up to 2 cpu(s) for setting up the structure of the matrix.
+ number of equations
+ 92519
+ number of nonzero lower triangular matrix elements
+ 6674873
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the symmetric stiffness/mass contributions.
+
+ Factoring the system of equations using the symmetric spooles solver
+ Using up to 2 cpu(s) for spooles.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the symmetric stiffness/mass contributions.
+
+ Factoring the system of equations using the symmetric spooles solver
+ Using up to 2 cpu(s) for spooles.
+
+ Calculating the buckling factors and buckling modes:
+
+sigma=1.000000,d[0]=0.870120
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+
+  The numbers below are estimated upper bounds
+
+  number of:
+
+   nodes:        31783
+   elements:         6144
+   one-dimensional elements:            0
+   two-dimensional elements:            0
+   integration points per element:            8
+   degrees of freedom per node:            3
+   layers per element:            1
+
+   distributed facial loads:            0
+   distributed volumetric loads:            0
+   concentrated loads:          359
+   single point constraints:         2830
+   multiple point constraints:            1
+   terms in all multiple point constraints:            1
+   tie constraints:            0
+   dependent nodes tied by cyclic constraints:            0
+   dependent nodes in pre-tension constraints:            0
+
+   sets:            4
+   terms in all sets:        71822
+
+   materials:            1
+   constants per material and temperature:            2
+   temperature points per material:            1
+   plastic data points per material:            0
+
+   orientations:            0
+   amplitudes:            2
+   data points in all amplitudes:            2
+   print requests:            0
+   transformations:            0
+   property cards:            0
+
+
+ STEP            1
+
+ Buckling analysis was selected
+
+
+ Job finished
+
+
+--- end console output ---
+mesh_64_32_3_buckling completed in 9.83 s
+mesh_64_32_3_buckling: computed buckling factors [(1, 0.8701205), (2, 1.12804), (3, 1.430003), (4, 1.441583), (5, 1.520463), (6, 1.582858), (7, 1.762911), (8, 1.775026)]
+Running mesh_64_32_3_buckling_low; timeout=240 s
+
+--- mesh_64_32_3_buckling_low: full CalculiX console output ---
+OMP: Warning #179: Function Can't set size of /tmp file failed:
+
+************************************************************
+
+CalculiX Version 2.23, Copyright(C) 1998-2025 Guido Dhondt
+CalculiX comes with ABSOLUTELY NO WARRANTY. This is free
+software, and you are welcome to redistribute it under
+certain conditions, see gpl.htm
+
+************************************************************
+
+You are using an executable made on Mon Sep 28 09:19:28 2026
+ Decascading the MPC's
+
+ Determining the structure of the matrix:
+ Using up to 2 cpu(s) for setting up the structure of the matrix.
+ number of equations
+ 92519
+ number of nonzero lower triangular matrix elements
+ 6674873
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the symmetric stiffness/mass contributions.
+
+ Factoring the system of equations using the symmetric spooles solver
+ Using up to 2 cpu(s) for spooles.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the symmetric stiffness/mass contributions.
+
+ Factoring the system of equations using the symmetric spooles solver
+ Using up to 2 cpu(s) for spooles.
+
+ Calculating the buckling factors and buckling modes:
+
+sigma=1.000000,d[0]=3.790308
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+
+  The numbers below are estimated upper bounds
+
+  number of:
+
+   nodes:        31783
+   elements:         6144
+   one-dimensional elements:            0
+   two-dimensional elements:            0
+   integration points per element:            8
+   degrees of freedom per node:            3
+   layers per element:            1
+
+   distributed facial loads:            0
+   distributed volumetric loads:            0
+   concentrated loads:          359
+   single point constraints:         2830
+   multiple point constraints:            1
+   terms in all multiple point constraints:            1
+   tie constraints:            0
+   dependent nodes tied by cyclic constraints:            0
+   dependent nodes in pre-tension constraints:            0
+
+   sets:            4
+   terms in all sets:        71822
+
+   materials:            1
+   constants per material and temperature:            2
+   temperature points per material:            1
+   plastic data points per material:            0
+
+   orientations:            0
+   amplitudes:            2
+   data points in all amplitudes:            2
+   print requests:            0
+   transformations:            0
+   property cards:            0
+
+
+ STEP            1
+
+ Buckling analysis was selected
+
+
+ Job finished
+
+
+--- end console output ---
+mesh_64_32_3_buckling_low completed in 9.85 s
+mesh_64_32_3_buckling_low: computed buckling factors [(1, 3.790308), (2, 4.637877), (3, 5.567585), (4, 6.698619), (5, 8.701205), (6, 11.2804), (7, 14.30003), (8, 14.41583)]
+mesh_64_32_3: first factor at full load 0.8701205; at 10 % load, scaled back 0.3790308; they disagree, so the full-load run missed lower factors.
+Observed refinement change in lambda1: 0.000976174%
+Running mesh_64_32_3_reference_static; timeout=558 s
+
+--- mesh_64_32_3_reference_static: full CalculiX console output ---
+OMP: Warning #179: Function Can't set size of /tmp file failed:
+
+************************************************************
+
+CalculiX Version 2.23, Copyright(C) 1998-2025 Guido Dhondt
+CalculiX comes with ABSOLUTELY NO WARRANTY. This is free
+software, and you are welcome to redistribute it under
+certain conditions, see gpl.htm
+
+************************************************************
+
+You are using an executable made on Mon Sep 28 09:19:28 2026
+ Decascading the MPC's
+
+ Determining the structure of the matrix:
+ Using up to 2 cpu(s) for setting up the structure of the matrix.
+ number of equations
+ 92519
+ number of nonzero lower triangular matrix elements
+ 6674873
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+ Using up to 2 cpu(s) for the symmetric stiffness/mass contributions.
+
+ Factoring the system of equations using the symmetric spooles solver
+ Using up to 2 cpu(s) for spooles.
+
+ Using up to 2 cpu(s) for the stress calculation.
+
+
+  The numbers below are estimated upper bounds
+
+  number of:
+
+   nodes:        31783
+   elements:         6144
+   one-dimensional elements:            0
+   two-dimensional elements:            0
+   integration points per element:            8
+   degrees of freedom per node:            3
+   layers per element:            1
+
+   distributed facial loads:            0
+   distributed volumetric loads:            0
+   concentrated loads:          359
+   single point constraints:         2830
+   multiple point constraints:            1
+   terms in all multiple point constraints:            1
+   tie constraints:            0
+   dependent nodes tied by cyclic constraints:            0
+   dependent nodes in pre-tension constraints:            0
+
+   sets:            4
+   terms in all sets:        71822
+
+   materials:            1
+   constants per material and temperature:            2
+   temperature points per material:            1
+   plastic data points per material:            0
+
+   orientations:            0
+   amplitudes:            2
+   data points in all amplitudes:            2
+   print requests:            3
+   transformations:            0
+   property cards:            0
+
+
+ STEP            1
+
+ *WARNING reading *STATIC:
+          the minimum increment    0.0000000000000000     
+          is smaller then 1.e-6 times the 
+          step time;
+          the minimum increment is changed
+          to    9.9999999999999995E-007
+          which is the minimum of the initial
+          increment time and 1.e-6 times the step time
+
+ Static analysis was selected
+
+
+ Job finished
+
+
+--- end console output ---
+mesh_64_32_3_reference_static completed in 3.67 s
+Selected finest successful mesh: mesh_64_32_3; lambda1=0.3790308
+Sanity: lambda1 / hand estimate = 1.037, i.e. k = 4.15 (at least 4 expected; a little above 4 for one clamped end)
+Reference stresses/strains are retained in static .dat and .frd; buckling mode displacements in buckling .frd. Refinement values are measured solver results, not extrapolated.
+Total elapsed time: 31.10 s

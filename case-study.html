@@ -332,12 +332,12 @@ ol.did li.wrong { color: var(--crit); font-weight: 500; }
   <div class="wrap">
     <a class="brand" href="index.html"><b>CADFEM-Bench</b><span>v1.9</span></a>
     <nav aria-label="Sections">
-      <a href="index.html#how">Benchmark</a><a href="index.html#tasks">Tasks</a><a href="index.html#specs">Specs</a><a href="index.html#results">Results</a><a href="worked-example.html">Worked example</a><a href="case-study.html" aria-current="page" style="color:var(--ink);background:var(--rule-2)">Astra failures</a>
+      <a href="index.html#how">Benchmark</a><a href="index.html#tasks">Tasks</a><a href="index.html#specs">Specs</a><a href="index.html#results">Results</a><a href="worked-example.html">Worked examples</a><a href="case-study.html" aria-current="page" style="color:var(--ink);background:var(--rule-2)">Astra failures</a>
     </nav>
   </div>
 </header>
 <div class="zones" aria-hidden="true"></div>
-<div class="wrap" style="padding-block:16px 0"><nav class="caseswitch" aria-label="Case studies"><a href="case-study.html" aria-current="page">Case 1 · wrong number (BT-plate-08)</a><a href="case-study-2.html">Case 2 · no answer (bracket 000)</a></nav></div>
+<div class="wrap" style="padding-block:16px 0"><nav class="caseswitch" aria-label="Case studies"><a href="case-study.html" aria-current="page">Case 1 · wrong number (BT-plate-08)</a><a href="case-study-2.html">Case 2 · no answer (bracket 000)</a><a href="worked-example-failed.html">Case 1 as a 14-step worked example →</a></nav></div>
 <main>
   <section class="case-hero">
     <div class="wrap">
@@ -409,7 +409,7 @@ Submit results.json containing exactly an outputs object with this numeric key, 
       <div class="head"><p class="label">3 · The correct answer</p><h2>0.379, checked three ways</h2></div>
       <div class="checks3">
         <article><p class="label">Our FEM model</p><b>0.379</b><p>FEniCSx with quadratic elements and the SLEPc eigen-solver, on three meshes (14 762, 23 411 and 36 095 elements): 0.3787, 0.3788, 0.3790.</p></article>
-        <article><p class="label">Hand formula</p><b>≈ 0.38</b><p>Plate buckling stress = k · π²E / (12(1 − ν²)) · (t/b)² ≈ 25.8 · k MPa. For this plate k ≈ 4, so it buckles near 107 MPa, which is 0.38 of the 282.8 MPa push. Astra's 0.870 would need k ≈ 9.5, far above any textbook value for this plate.</p></article>
+        <article><p class="label">Hand formula</p><b>≈ 0.37</b><p>Plate buckling stress = k · π²E / (12(1 − ν²)) · (t/b)² ≈ 25.8 · k MPa. A plate twice as long as wide, held on all four edges, has k = 4: it buckles at 103 MPa, 0.366 of the 282.8 MPa push. The clamped end raises this a little (0.379 means k = 4.15). Astra's 0.870 would need k ≈ 9.5, far above any textbook value for this plate.</p></article>
         <article><p class="label">Astra's own file</p><b>0.379</b><p>We reran Astra's own CalculiX file unchanged except for the load, cut to 10 %. The first factor came out as 3.7903, which is 0.3790 at the full load: the same answer.</p></article>
       </div>
     </div>
@@ -447,7 +447,7 @@ Submit results.json containing exactly an outputs object with this numeric key, 
         <article><h3>3. The scaling law</h3>
           <p>K does not depend on the load and K<sub>G</sub> is proportional to it, so multiplying the load by α divides every λ by α, exactly. CalculiX broke this law: at the full load its first factor was 0.870; at 10 % load it was 3.790, i.e. 0.379 at full load. A correct solver must give the same answer both ways. The value 0.8701205 appears in both runs, as mode 1 and as mode 5, so the four lower modes were <b>missed</b>, not miscomputed.</p></article>
         <article><h3>4. A hand formula</h3>
-          <p>Plate theory: buckling stress = k · π²E / (12(1 − ν²)) · (t/b)² ≈ 25.8 · k MPa for this plate, with k ≈ 4 for a plate twice as long as wide. That puts λ₁ near 0.38. Astra's 0.870 needs k ≈ 9.5. No textbook support condition for this plate gets close to that.</p></article>
+          <p>Plate theory: buckling stress = k · π²E / (12(1 − ν²)) · (t/b)² ≈ 25.8 · k MPa for this plate, with k = 4 for a plate twice as long as wide held on all four edges, a little more with one end clamped. That puts λ₁ a little above 0.37. Astra's 0.870 needs k ≈ 9.5. No textbook support condition for this plate gets close to that.</p></article>
       </div>
       <div class="tables">
         <div><p class="label">Mode count on our model (Sturm check)</p>
