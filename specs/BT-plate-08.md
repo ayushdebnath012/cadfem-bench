@@ -4,6 +4,8 @@
 
 Family: Trap: thin plate · Set: Buckling traps · Physics: Buckling · Track A: the CAD file is given
 
+Case study: https://ayushdebnath012.github.io/cadfem-bench/case-study.html
+
 ## Overview
 
 One of the 82 buckling-trap tasks: a simple metal part pushed along its length, with the push set above what it can take, so the true first buckling factor is below 1. A thin plate clamped at one end, with its edges held flat, pushed along its length.

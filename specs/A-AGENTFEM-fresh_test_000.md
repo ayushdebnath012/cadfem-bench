@@ -4,6 +4,8 @@
 
 Family: Double-arm support bracket · Set: Main · Physics: Stress and bending · Track A: the CAD file is given
 
+Case study: https://ayushdebnath012.github.io/cadfem-bench/case-study-2.html
+
 ## Overview
 
 An aluminium bracket that stands on two feet and holds a seat on top. Its feet are fixed to the floor and the seat is pushed down with 10 kN (about the weight of one tonne).
