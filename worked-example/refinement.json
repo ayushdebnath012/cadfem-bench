@@ -1,0 +1,44 @@
+{
+  "levels": [
+    {
+      "h_mm": 10.0,
+      "unknowns": 14658,
+      "vertices": 845,
+      "elements": 2361,
+      "outputs": {
+        "max_displacement_compression_mm": 0.00043574941023855415,
+        "max_displacement_lateral_mm": 0.0030121833129527435
+      }
+    },
+    {
+      "h_mm": 7.0,
+      "unknowns": 28803,
+      "vertices": 1649,
+      "elements": 4662,
+      "outputs": {
+        "max_displacement_compression_mm": 0.0004376706209461959,
+        "max_displacement_lateral_mm": 0.003022875433696401
+      },
+      "change_from_previous_percent": {
+        "max_displacement_compression_mm": 0.44089806262501696,
+        "max_displacement_lateral_mm": 0.35496248510773487
+      }
+    },
+    {
+      "h_mm": 5.0,
+      "unknowns": 68046,
+      "vertices": 3621,
+      "elements": 12482,
+      "outputs": {
+        "max_displacement_compression_mm": 0.00043847845700420673,
+        "max_displacement_lateral_mm": 0.0030283347261139807
+      },
+      "change_from_previous_percent": {
+        "max_displacement_compression_mm": 0.18457625880037298,
+        "max_displacement_lateral_mm": 0.18059931801106544
+      }
+    }
+  ],
+  "element": "P2 tetrahedra (10 nodes, straight edges)",
+  "criterion": "each output changes by less than 1 % between the two finest meshes"
+}

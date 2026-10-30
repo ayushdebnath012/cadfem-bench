@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="CADFEM-Bench v1.9: 217 CAD + finite-element tasks for AI models, explained in plain words, with scoring and first results.">
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
-<title>CADFEM-Bench</title>
+<title>Can AI Do Engineering Analysis? · CADFEM-Bench</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -298,7 +298,7 @@ pre.json .c { color: var(--ink-3); }
   <div class="wrap">
     <a class="brand" href="#top"><b>CADFEM-Bench</b><span>v1.9</span></a>
     <nav aria-label="Sections">
-      <a href="#parts">Parts</a><a href="#how">How it works</a><a href="#tasks">Tasks</a><a href="#specs">Specs</a><a href="#scoring">Scoring</a><a href="#results">Results</a><a href="#run">Run it</a><a href="#data">Data</a><a href="case-study.html">Astra failures</a>
+      <a href="#how">Benchmark</a><a href="#dataset">Dataset</a><a href="#experiments">Experiments</a><a href="#results">Results</a><a href="#analysis">Analysis</a><a href="worked-example.html">Worked example</a><a href="case-study.html">Astra failures</a><a href="#tasks">Tasks</a><a href="#run">Run it</a><a href="#data">Data</a>
     </nav>
   </div>
 </header>
@@ -309,11 +309,12 @@ pre.json .c { color: var(--ink-3); }
     <div class="wrap">
       <div>
         <p class="label">Benchmark · version 1.9 · updated 30 October 2026</p>
-        <h1>Can an AI do a real engineering analysis?</h1>
+        <h1>Can AI Do Engineering Analysis?</h1>
         <p class="lead">Each task gives an AI model a real part: a 3D CAD file or a written description, the material, how the part is held and how it is loaded. The model writes one program that meshes the part, runs a finite-element simulation and reports what an engineer needs to know: how far it bends, when it buckles, how fast it vibrates, how hot it gets. We run that program offline and check every number against a trusted answer.</p>
         <div class="cta">
           <a class="btn primary" href="#tasks">Browse the 217 tasks</a>
           <a class="btn ghost" href="#how">See how a task works</a>
+          <a class="btn ghost" href="worked-example.html">Worked example</a>
           <a class="btn ghost" href="case-study.html">See how Astra failed</a>
         </div>
       </div>
@@ -339,22 +340,12 @@ pre.json .c { color: var(--ink-3); }
     </div>
   </div>
 
-  <section class="block" id="parts" style="padding-bottom:0">
-    <div class="wrap">
-      <div class="head">
-        <p class="label">The parts</p>
-        <h2>Real parts, from brackets to valves</h2>
-        <p class="lead">Every family of tasks is built around real CAD designs, collected from open engineering projects, CAD datasets and solver test suites on the web. These are some of the parts the model has to analyse. Click one to see its tasks.</p>
-      </div>
-      <div class="gallery" id="gallery"></div>
-    </div>
-  </section>
-
   <section class="block" id="how">
     <div class="wrap">
       <div class="head">
-        <p class="label">How it works</p>
-        <h2>Three words you need</h2>
+        <p class="label">2.1 · Task formulation</p>
+        <h2>How a task works</h2>
+        <p class="lead">A task gives the model a prompt and a CAD file (or a written description). The model returns one Python program that builds or reads the geometry, meshes it, runs a FEM solver and writes the answer. Three words first.</p>
       </div>
       <div class="gloss">
         <article><p class="label">CAD</p><h3>The shape</h3><p>A 3D model of a part, like the file an engineer sends to a 3D printer or a machine shop. We use the STEP format, which any CAD program can open.</p></article>
@@ -423,61 +414,10 @@ pre.json .c { color: var(--ink-3); }
     </div>
   </section>
 
-  <section class="block" id="tasks">
-    <div class="wrap">
-      <div class="head">
-        <p class="label">Tasks</p>
-        <h2>All 217 tasks, in plain words</h2>
-        <p class="lead">Tasks come in families: the same kind of part or problem with different shapes, sizes or loads. Every task lists its input, its output values and the metric that decides a pass. Open a task for the formulas, the source and the exact prompt.</p>
-      </div>
-      <div class="filters" role="search">
-        <input id="f-q" type="search" placeholder="Search: bracket, crack, titanium, BT-plate…" aria-label="Search tasks">
-        <select id="f-topic" aria-label="Physics"></select>
-        <select id="f-given" aria-label="What the model gets"></select>
-        <select id="f-set" aria-label="Task set"></select>
-        <select id="f-astra" aria-label="GPT-6 Astra result"></select>
-        <button id="f-reset" type="button">Clear filters</button>
-        <p class="count" id="count" aria-live="polite"></p>
-      </div>
-      <div id="groups"></div>
-    </div>
-  </section>
-
-  <section class="block" id="specs">
-    <div class="wrap">
-      <div class="head">
-        <p class="label">Specs</p>
-        <h2>Input, output and metrics for every task</h2>
-        <p class="lead">Every task follows the same contract. The table below gives each task its own input files, output values and pass formulas. It follows the filters in the Tasks section, and you can download it as CSV or JSON.</p>
-      </div>
-      <div class="spec3">
-        <article><p class="label">Input</p><h3>What the model gets</h3><ul>
-          <li>A prompt with the geometry (or the CAD file name), material, supports, loads and the type of analysis.</li>
-          <li>Tasks that give the CAD: a STEP or BREP file, usually with a face list (faces.json) so loads can be placed by geometry.</li>
-          <li>Tasks that need the model to build the CAD: a written specification and figures instead of a CAD file.</li>
-          <li>Nothing else: no reference values, no internet, one try.</li></ul></article>
-        <article><p class="label">Output</p><h3>What it must return</h3><ul>
-          <li><code>results.json</code> with exactly the requested numbers, under the given keys and units.</li>
-          <li>Main, extra and calibration tasks: 8 files in all: <code>main.py</code>, <code>part.step</code>, <code>mesh.msh</code>, <code>fields.npz</code>, <code>solver.log</code>, <code>refinement.json</code> (at least three mesh levels), <code>environment.json</code>.</li>
-          <li>Buckling traps: <code>results.json</code>, <code>main.py</code> and <code>solver.log</code>.</li></ul></article>
-        <article><p class="label">Metrics</p><h3>How it is scored</h3><ul>
-          <li><b>Numbers:</b> relative error |answer − reference| / |reference| within each output's band (usually 5 % or 10 %). Numerical pass needs every output in band; the numerical score is the fraction in band.</li>
-          <li><b>Shape</b> (when the model builds the CAD): same solid count, volume within 2 %, Hausdorff distance at most max(0.5 mm, 0.1 % of the diagonal).</li>
-          <li><b>Files and review:</b> all required files present, <code>part.step</code> a valid solid, and expert human annotators sign off 5 checks (execution, CAD geometry, setup, field outputs, convergence).</li>
-          <li><b>Pass</b> = numbers pass and workflow verified. Reported as pass rate, numerical pass rate and family-averaged pass rate.</li></ul></article>
-      </div>
-      <p class="count" id="spec-count" style="margin-top:24px"></p>
-      <div class="spec-table"><table><thead><tr><th>Task</th><th>Input</th><th>Output</th><th>Metric</th></tr></thead><tbody id="spec-rows"></tbody></table></div>
-      <div class="downloads"><span>Full per-task spec (217 rows, no reference values):</span>
-        <a href="https://github.com/ayushdebnath012/cadfem-bench/blob/main/task-specs.csv" target="_blank" rel="noopener">task-specs.csv</a>
-        <a href="https://github.com/ayushdebnath012/cadfem-bench/blob/main/task-specs.json" target="_blank" rel="noopener">task-specs.json</a></div>
-    </div>
-  </section>
-
   <section class="block" id="scoring">
     <div class="wrap">
       <div class="head">
-        <p class="label">Scoring</p>
+        <p class="label">2.2 · Grading</p>
         <h2>Four checks, scored separately</h2>
         <p class="lead">Getting a number right is not enough on its own. A model could guess or copy a known answer, so the files behind the number are checked too.</p>
       </div>
@@ -488,22 +428,113 @@ pre.json .c { color: var(--ink-3); }
         <article><p class="label">4 · Review</p><h3>Honest setup</h3><p>Expert human annotators, who do not know which model wrote the code, verify the CAD and sign off the supports, loads, mesh and convergence against the file hashes.</p></article>
       </div>
       <p class="rule-line">A task <b>passes</b> only when the numbers are right and the expert human annotators sign off. Results are reported separately for tasks that give the CAD and tasks that need the model to build it, and runs with tools or feedback are reported apart from single-shot runs.</p>
+      <p class="fine">Like dense-reward benchmarks, we also report partial credit: the <b>numerical score</b> is the fraction of a task's values inside their bands (0, ½ or 1 for a two-value task), so near-misses are visible, not just pass or fail.</p>
+    </div>
+  </section>
+
+  <section class="block" id="dataset">
+    <div class="wrap">
+      <div class="head">
+        <p class="label">2.3 · Dataset construction</p>
+        <h2>Where the tasks and answers come from</h2>
+        <p class="lead">Tasks are built from real CAD designs and their FEM results collected from the web, plus a family of generated buckling tasks. Every task is checked before it is admitted.</p>
+      </div>
+      <div class="spec3">
+        <article><p class="label">Sources</p><h3>Collected from the web</h3><ul>
+          <li>Open CAD datasets: GE jet-engine bracket designs (SimJEB), AgentFEM brackets, GeoPINONet holed plates, CADWorld.</li>
+          <li>Open engineering projects: a 3D-printable cycloidal gearbox, a rigging plate, morphing-wing test plates.</li>
+          <li>Solver test suites: Code_Aster validation tests, the fcVM FreeCAD workbench, FeenoX, NAFEMS benchmarks, Wolfram FEM tests.</li>
+          <li>Generated: 82 buckling traps (100 built, 18 held back).</li></ul></article>
+        <article><p class="label">Answers</p><h3>One trusted answer per value</h3><ul>
+          <li>Main set (135 values): 85 from the source's results tables, 24 from its result files, 12 exact formulas, 5 read from stress plots, 4 from the source's own checker, 4 from another solver, 1 from the source's model.</li>
+          <li>Buckling traps: computed by us with quadratic elements and an eigen-solver that cannot skip modes, on three meshes, with a closed-form check where one exists.</li>
+          <li>No answer is ever shown to the model.</li></ul></article>
+        <article><p class="label">Validation</p><h3>Checked before admission</h3><ul>
+          <li>17 of the 64 main-set answers reproduced with an independent FEM model; the <a href="worked-example.html">worked example</a> adds one more.</li>
+          <li>Buckling traps admitted only if three meshes agree and the trap holds: 18 of 100 were held back (10 differed from the closed-form value by more than 3 %, and 8 perforated strips did not pass admission).</li>
+          <li>Six task defects found during model runs (a wrong prompt detail, a reference from a simpler model, a drawing never attached) are marked and not counted against any model.</li>
+          <li>Difficulty labels (easy or hard) will be set from the mean score once three or more models are run.</li></ul></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="parts">
+    <div class="wrap">
+      <div class="head">
+        <p class="label">2.4 · Task composition</p>
+        <h2>Real parts, from brackets to valves</h2>
+        <p class="lead">Every family of tasks is built around real CAD designs, collected from open engineering projects, CAD datasets and solver test suites on the web. These are some of the parts the model has to analyse. Click one to see its tasks.</p>
+      </div>
+      <div class="gallery" id="gallery"></div>
+      <div class="tbl" style="margin-top:24px"><table><thead><tr><th>Physics</th><th>Main</th><th>Extra</th><th>Buckling traps</th><th>Calibration</th><th>All</th></tr></thead><tbody id="composition"></tbody></table></div>
+    </div>
+  </section>
+
+  <section class="block" id="experiments">
+    <div class="wrap">
+      <div class="head">
+        <p class="label">3 · Experiments</p>
+        <h2>Harness, models and metrics</h2>
+      </div>
+      <div class="spec3">
+        <article><p class="label">Harness</p><h3>One program, one replay</h3><ul>
+          <li><b>Single shot:</b> one model call per task returns <code>main.py</code>; no tools, no feedback.</li>
+          <li><b>Agentic</b> (reported separately): the model may run code and read errors before submitting.</li>
+          <li>Every submission is replayed once by <code>sandbox_runner.py</code>: offline, read-only inputs, 600 s, 8 GiB, 2 threads, with CadQuery, Gmsh, NumPy/SciPy, meshio, scikit-fem and CalculiX 2.23.</li></ul></article>
+        <article><p class="label">Models</p><h3>18 models</h3><ul>
+          <li>The 17 frontier models evaluated in Long-Horizon-Terminal-Bench (Li et al., arXiv 2607.08964): GPT-5.6-sol, GPT-5.5, GPT-5.4, GPT-5.3 Codex, DeepSeek V4 Pro, Gemini 3.1 Pro, GLM 5.1, GLM 5.2, Kimi K2.6, Kimi K2.7 Code, MiniMax M3, Qwen3.7 Max, Qwen3.6 Plus, Doubao Seed 2.1 Pro, Hy3, Grok 4.20, Grok 4.5.</li>
+          <li>Plus GPT-6 Astra, our first model, run so far on 86 tasks.</li></ul></article>
+        <article><p class="label">Metrics</p><h3>What we report</h3><ul>
+          <li><b>Pass@1:</b> share of tasks with every value in band and the expert review signed off.</li>
+          <li><b>Numerical pass@1:</b> share with every value in band.</li>
+          <li><b>Numerical score:</b> mean share of values in band (partial credit).</li>
+          <li>Family-averaged pass rate, cost and tokens per task, and failure type (no answer, wrong value, refused), which does not depend on any band.</li></ul></article>
+      </div>
     </div>
   </section>
 
   <section class="block" id="results">
     <div class="wrap">
       <div class="head">
-        <p class="label">Results</p>
+        <p class="label">3.1 · Main results</p>
         <h2>Leaderboard</h2>
+        <p class="lead">No model has been run on all 217 tasks yet. The table lists the models we will evaluate; scores appear as full runs finish, with pass@1, numerical pass@1, numerical score, a 95 % interval and the cost per task.</p>
       </div>
       <div class="tbl board">
         <table>
-          <thead><tr><th>Rank</th><th>Model</th><th>Setup</th><th>Tasks passed</th><th>Cost</th></tr></thead>
-          <tbody><tr><td class="empty" colspan="5">No model has been run on all 217 tasks yet. Full runs will appear here, one row per model and setup, with a 95 % interval and the cost.</td></tr></tbody>
+          <thead><tr><th>Rank</th><th>Model</th><th>Setup</th><th>Tasks run</th><th>Pass@1</th><th>Cost / task</th></tr></thead>
+          <tbody><tr><td>—</td><td><b>GPT-6 Astra</b></td><td>Single shot</td><td class="num">86 of 217</td><td>Partial run on tasks chosen to find failures; not a score (see 3.2)</td><td class="num">$0.20</td></tr>
+<tr><td>—</td><td>GPT-5.6-sol</td><td>—</td><td class="num">0</td><td style="color:var(--ink-3)">Not yet run</td><td>—</td></tr>
+<tr><td>—</td><td>GPT-5.5</td><td>—</td><td class="num">0</td><td style="color:var(--ink-3)">Not yet run</td><td>—</td></tr>
+<tr><td>—</td><td>GPT-5.4</td><td>—</td><td class="num">0</td><td style="color:var(--ink-3)">Not yet run</td><td>—</td></tr>
+<tr><td>—</td><td>GPT-5.3 Codex</td><td>—</td><td class="num">0</td><td style="color:var(--ink-3)">Not yet run</td><td>—</td></tr>
+<tr><td>—</td><td>DeepSeek V4 Pro</td><td>—</td><td class="num">0</td><td style="color:var(--ink-3)">Not yet run</td><td>—</td></tr>
+<tr><td>—</td><td>Gemini 3.1 Pro</td><td>—</td><td class="num">0</td><td style="color:var(--ink-3)">Not yet run</td><td>—</td></tr>
+<tr><td>—</td><td>GLM 5.1</td><td>—</td><td class="num">0</td><td style="color:var(--ink-3)">Not yet run</td><td>—</td></tr>
+<tr><td>—</td><td>GLM 5.2</td><td>—</td><td class="num">0</td><td style="color:var(--ink-3)">Not yet run</td><td>—</td></tr>
+<tr><td>—</td><td>Kimi K2.6</td><td>—</td><td class="num">0</td><td style="color:var(--ink-3)">Not yet run</td><td>—</td></tr>
+<tr><td>—</td><td>Kimi K2.7 Code</td><td>—</td><td class="num">0</td><td style="color:var(--ink-3)">Not yet run</td><td>—</td></tr>
+<tr><td>—</td><td>MiniMax M3</td><td>—</td><td class="num">0</td><td style="color:var(--ink-3)">Not yet run</td><td>—</td></tr>
+<tr><td>—</td><td>Qwen3.7 Max</td><td>—</td><td class="num">0</td><td style="color:var(--ink-3)">Not yet run</td><td>—</td></tr>
+<tr><td>—</td><td>Qwen3.6 Plus</td><td>—</td><td class="num">0</td><td style="color:var(--ink-3)">Not yet run</td><td>—</td></tr>
+<tr><td>—</td><td>Doubao Seed 2.1 Pro</td><td>—</td><td class="num">0</td><td style="color:var(--ink-3)">Not yet run</td><td>—</td></tr>
+<tr><td>—</td><td>Hy3</td><td>—</td><td class="num">0</td><td style="color:var(--ink-3)">Not yet run</td><td>—</td></tr>
+<tr><td>—</td><td>Grok 4.20</td><td>—</td><td class="num">0</td><td style="color:var(--ink-3)">Not yet run</td><td>—</td></tr>
+<tr><td>—</td><td>Grok 4.5</td><td>—</td><td class="num">0</td><td style="color:var(--ink-3)">Not yet run</td><td>—</td></tr>
+</tbody>
         </table>
       </div>
+      <p class="fine">Model list: the 17 models reported by Long-Horizon-Terminal-Bench (arXiv 2607.08964, v3), so results can be compared across the two benchmarks, plus GPT-6 Astra. Their scores there are for terminal tasks and are not copied here.</p>
+    </div>
+  </section>
 
+  <section class="block" id="analysis">
+    <div class="wrap">
+      <div class="head">
+        <p class="label">3.2 · Analysis</p>
+        <h2>Where and why models fail</h2>
+        <p class="lead">Failure patterns of GPT-6 Astra, whether the verdicts depend on the tolerance, and the cost per task. Two failures are explained step by step in <a href="case-study.html">Astra failures</a>, and one task is solved end to end in the <a href="worked-example.html">worked example</a>.</p>
+      </div>
       <div class="viz" id="viz">
         <div class="head" style="margin:0">
           <h3>First look: GPT-6 Astra on 86 tasks</h3>
@@ -519,6 +550,13 @@ pre.json .c { color: var(--ink-3); }
           <p class="lead" style="font-size:0.98rem">No. Widen the pass band and almost every failure stays a failure. The 21 runs with no answer fail at any band. The 30 wrong numbers were 1.6 to 9.0 times the reference. They are not inaccurate values: in all 30, Astra's own solver file at 10 % load finds a lower first mode equal to the reference, and in 27 the value Astra reported appears in that same list as mode 2, 3 or 5. <a href="case-study.html">Case 1</a> proves it for one task by counting modes, with no tolerance at all.</p></div>
         <div class="tbl"><table><thead><tr><th>Pass band</th><th>±5 %</th><th>±10 %</th><th>±20 %</th><th>±50 %</th><th>±60 %</th><th>±100 %</th><th>±200 %</th><th>±500 %</th></tr></thead>
           <tbody><tr><td>Astra failures still failing (of 51)</td><td class="num">51</td><td class="num">51</td><td class="num">51</td><td class="num">51</td><td class="num">51</td><td class="num">50</td><td class="num">43</td><td class="num">32</td></tr></tbody></table></div>
+      </div>
+      <div class="viz" style="margin-top:24px">
+        <div class="head" style="margin:0"><h3>3.3 · Cost per task (GPT-6 Astra, single shot)</h3>
+          <p class="lead" style="font-size:0.98rem">From 68 batch runs on 27 and 28 October 2026.</p></div>
+        <div class="tbl"><table><thead><tr><th>Model calls</th><th>Cost (mean / median)</th><th>Output tokens</th><th>of which reasoning</th><th>Prompt tokens</th><th>Program run time (mean / max)</th></tr></thead>
+          <tbody><tr><td class="num">1</td><td class="num">$0.195 / $0.176</td><td class="num">7 418</td><td class="num">2 365</td><td class="num">1 634</td><td class="num">9.1 s / 54.9 s</td></tr></tbody></table></div>
+        <p class="fine" style="margin-top:0">OpenAI Batch API prices (half the standard rate). Our <a href="worked-example.html">worked example</a> program runs in 11 s.</p>
       </div>
       <div class="mech">
         <article><b>30</b><p class="label">wrong number, unchecked</p><p>The setup was right, but it trusted the solver's first printed answer, which was a skipped buckling mode.</p></article>
@@ -564,6 +602,57 @@ python evaluator/sandbox_runner.py replay --package . --job ../job-001 --backend
         <p><b>Licences.</b> Each task keeps its source's terms, listed with the task. Material made for this benchmark (the buckling traps, prompts, records and scripts) is CC BY 4.0.</p>
         <p><b>Please keep these tasks and answers out of training data.</b></p>
       </div>
+    </div>
+  </section>
+
+  <section class="block" id="tasks">
+    <div class="wrap">
+      <div class="head">
+        <p class="label">Appendix A · List of tasks</p>
+        <h2>All 217 tasks, in plain words</h2>
+        <p class="lead">Tasks come in families: the same kind of part or problem with different shapes, sizes or loads. Every task lists its input, its output values and the metric that decides a pass. Open a task for the formulas, the source and the exact prompt.</p>
+      </div>
+      <div class="filters" role="search">
+        <input id="f-q" type="search" placeholder="Search: bracket, crack, titanium, BT-plate…" aria-label="Search tasks">
+        <select id="f-topic" aria-label="Physics"></select>
+        <select id="f-given" aria-label="What the model gets"></select>
+        <select id="f-set" aria-label="Task set"></select>
+        <select id="f-astra" aria-label="GPT-6 Astra result"></select>
+        <button id="f-reset" type="button">Clear filters</button>
+        <p class="count" id="count" aria-live="polite"></p>
+      </div>
+      <div id="groups"></div>
+    </div>
+  </section>
+
+  <section class="block" id="specs">
+    <div class="wrap">
+      <div class="head">
+        <p class="label">Appendix B · Task specifications</p>
+        <h2>Input, output and metrics for every task</h2>
+        <p class="lead">Every task follows the same contract. The table below gives each task its own input files, output values and pass formulas. It follows the filters in the Tasks section, and you can download it as CSV or JSON.</p>
+      </div>
+      <div class="spec3">
+        <article><p class="label">Input</p><h3>What the model gets</h3><ul>
+          <li>A prompt with the geometry (or the CAD file name), material, supports, loads and the type of analysis.</li>
+          <li>Tasks that give the CAD: a STEP or BREP file, usually with a face list (faces.json) so loads can be placed by geometry.</li>
+          <li>Tasks that need the model to build the CAD: a written specification and figures instead of a CAD file.</li>
+          <li>Nothing else: no reference values, no internet, one try.</li></ul></article>
+        <article><p class="label">Output</p><h3>What it must return</h3><ul>
+          <li><code>results.json</code> with exactly the requested numbers, under the given keys and units.</li>
+          <li>Main, extra and calibration tasks: 8 files in all: <code>main.py</code>, <code>part.step</code>, <code>mesh.msh</code>, <code>fields.npz</code>, <code>solver.log</code>, <code>refinement.json</code> (at least three mesh levels), <code>environment.json</code>.</li>
+          <li>Buckling traps: <code>results.json</code>, <code>main.py</code> and <code>solver.log</code>.</li></ul></article>
+        <article><p class="label">Metrics</p><h3>How it is scored</h3><ul>
+          <li><b>Numbers:</b> relative error |answer − reference| / |reference| within each output's band (usually 5 % or 10 %). Numerical pass needs every output in band; the numerical score is the fraction in band.</li>
+          <li><b>Shape</b> (when the model builds the CAD): same solid count, volume within 2 %, Hausdorff distance at most max(0.5 mm, 0.1 % of the diagonal).</li>
+          <li><b>Files and review:</b> all required files present, <code>part.step</code> a valid solid, and expert human annotators sign off 5 checks (execution, CAD geometry, setup, field outputs, convergence).</li>
+          <li><b>Pass</b> = numbers pass and workflow verified. Reported as pass rate, numerical pass rate and family-averaged pass rate.</li></ul></article>
+      </div>
+      <p class="count" id="spec-count" style="margin-top:24px"></p>
+      <div class="spec-table"><table><thead><tr><th>Task</th><th>Input</th><th>Output</th><th>Metric</th></tr></thead><tbody id="spec-rows"></tbody></table></div>
+      <div class="downloads"><span>Full per-task spec (217 rows, no reference values):</span>
+        <a href="https://github.com/ayushdebnath012/cadfem-bench/blob/main/task-specs.csv" target="_blank" rel="noopener">task-specs.csv</a>
+        <a href="https://github.com/ayushdebnath012/cadfem-bench/blob/main/task-specs.json" target="_blank" rel="noopener">task-specs.json</a></div>
     </div>
   </section>
 </main>
@@ -704,6 +793,13 @@ python evaluator/sandbox_runner.py replay --package . --job ../job-001 --backend
     const row = e.target.closest("button[data-id]");
     if (row) openTask(byId[row.dataset.id]);
   });
+
+  /* task composition: physics x set */
+  const SETS = ["Main", "Extra", "Buckling traps", "Calibration"];
+  const comp = {}; D.tasks.forEach(x => { (comp[x.topic] = comp[x.topic] || {})[x.set] = ((comp[x.topic] || {})[x.set] || 0) + 1; });
+  document.getElementById("composition").innerHTML = Object.keys(comp).sort((a, b) => D.topics[b] - D.topics[a]).map(k =>
+    `<tr><td>${esc(k)}</td>${SETS.map(s => `<td class="num">${comp[k][s] || ""}</td>`).join("")}<td class="num"><b>${D.topics[k]}</b></td></tr>`).join("") +
+    `<tr><td><b>All</b></td>${SETS.map(s => `<td class="num"><b>${D.tasks.filter(x => x.set === s).length}</b></td>`).join("")}<td class="num"><b>${D.tasks.length}</b></td></tr>`;
 
   /* parts gallery */
   const GAL = ["simjeb-bracket", "feenox-valve-transient", "rigging-plate", "cycloidal-drive-components", "agentfem-bracket", "cadworld-freecad-fem", "codeaster-piping", "morphing-wing-plates"];

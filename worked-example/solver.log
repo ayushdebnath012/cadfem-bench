@@ -1,0 +1,17 @@
+[   0.00 s] A-GEOPINO-PLATE-1 worked example: scikit-fem 12.0.2 (P2 tetrahedra), Gmsh 4.15.2 , SciPy SuperLU
+[   0.01 s] CAD: [10, 15, 7, 1] points/curves/surfaces/volumes; size 176.914 x 148.475 x 10.000 mm; volume 259298.0 mm3
+[   0.01 s] faces: fixed = surface 5 (y = -74.2373), loaded = surface 3 (y = 74.2373), area 1769.14 mm2 each
+[   0.04 s] mesh h = 10.0 mm: 2361 tetrahedra, 845 vertices, mesh volume 259610.1 mm3
+[   0.44 s]   K: 14658 unknowns, 983062 nonzeros; fixed dofs 549; loaded area 1769.141 mm2
+[   0.79 s]   max_displacement_compression_mm: max |u| = 4.357494e-04 mm; applied [    0. -1000.     0.] N; reaction [   0. 1000.   -0.] N; balance error 1.7e-14; residual 2.8e-13
+[   0.80 s]   max_displacement_lateral_mm: max |u| = 3.012183e-03 mm; applied [1000.    0.    0.] N; reaction [-1000.    -0.     0.] N; balance error 7.0e-14; residual 1.5e-12
+[   0.86 s] mesh h = 7.0 mm: 4662 tetrahedra, 1649 vertices, mesh volume 259453.8 mm3
+[   1.75 s]   K: 28803 unknowns, 1932897 nonzeros; fixed dofs 807; loaded area 1769.141 mm2
+[   2.60 s]   max_displacement_compression_mm: max |u| = 4.376706e-04 mm; applied [    0. -1000.     0.] N; reaction [   0. 1000.    0.] N; balance error 8.4e-14; residual 4.2e-13
+[   2.61 s]   max_displacement_lateral_mm: max |u| = 3.022875e-03 mm; applied [1000.    0.    0.] N; reaction [-1000.    -0.     0.] N; balance error 2.7e-13; residual 2.3e-12
+[   2.72 s] mesh h = 5.0 mm: 12482 tetrahedra, 3621 vertices, mesh volume 259386.1 mm3
+[   4.99 s]   K: 68046 unknowns, 4902474 nonzeros; fixed dofs 1131; loaded area 1769.141 mm2
+[  10.77 s]   max_displacement_compression_mm: max |u| = 4.384785e-04 mm; applied [    0. -1000.     0.] N; reaction [   0. 1000.   -0.] N; balance error 1.0e-13; residual 7.0e-13
+[  10.81 s]   max_displacement_lateral_mm: max |u| = 3.028335e-03 mm; applied [1000.    0.    0.] N; reaction [-1000.     0.    -0.] N; balance error 2.9e-13; residual 3.9e-12
+[  10.83 s] convergence (finest vs previous mesh): {'max_displacement_compression_mm': '0.185 %', 'max_displacement_lateral_mm': '0.181 %'}
+[  10.86 s] results.json: {'max_displacement_compression_mm': 0.00043847845700420673, 'max_displacement_lateral_mm': 0.0030283347261139807}
