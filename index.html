@@ -237,8 +237,8 @@ footer .wrap { padding-block: 24px 32px; }
   section.block { padding-block: 56px 16px; }
 }
 /* CAD pictures */
-.shot { background: var(--paper); border-radius: 8px; aspect-ratio: 64 / 42; display: grid; place-items: center; overflow: hidden; }
-.shot img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.shot { position: relative; background: var(--paper); border-radius: 8px; aspect-ratio: 64 / 42; overflow: hidden; }
+.shot img { position: absolute; inset: 6px; width: calc(100% - 12px); height: calc(100% - 12px); max-width: none; object-fit: contain; display: block; }
 .card .shot { aspect-ratio: auto; height: 190px; }
 .dlg .shot { aspect-ratio: auto; height: 220px; }
 .shot-cap { font: 0.72rem var(--mono); color: var(--ink-3); margin-top: -4px; overflow-wrap: anywhere; }
@@ -257,11 +257,17 @@ footer .wrap { padding-block: 24px 32px; }
 @media (max-width: 900px) { .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 680px) { .pipeline { grid-template-columns: minmax(0, 1fr); } }
 /* specs */
+.io { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 2px 10px; margin: 6px 0 2px; grid-column: 1 / -1; font-size: 0.78rem; color: var(--ink-2); }
+.io dt { font: 500 0.66rem/1.7 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); }
+.io dd { margin: 0; overflow-wrap: anywhere; }
+.io code { font-size: 0.74rem; }
+.spec-table { max-height: 75vh; overflow: auto; }
+.spec-table thead th { position: sticky; top: 0; background: var(--sheet); z-index: 1; }
 .spec3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 .spec3 article { background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px; padding: 20px; display: grid; gap: 8px; align-content: start; min-width: 0; }
 .spec3 h3 { font-size: 1.4rem; }
 .spec3 ul { margin: 0; padding-left: 18px; color: var(--ink-2); font-size: 0.92rem; display: grid; gap: 4px; }
-.spec-table { margin-top: 24px; background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; overflow-x: auto; }
+.spec-table { margin-top: 8px; background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; overflow-x: auto; }
 .spec-table table { min-width: 860px; font-size: 0.86rem; }
 .spec-table td:first-child { font-weight: 600; min-width: 150px; }
 .spec-table td ul { margin: 0; padding-left: 16px; }
@@ -392,7 +398,7 @@ footer .wrap { padding-block: 24px 32px; }
       <div class="head">
         <p class="label">Tasks</p>
         <h2>All 217 tasks, in plain words</h2>
-        <p class="lead">Tasks come in families: the same kind of part or problem with different shapes, sizes or loads. Open any task to see what the model gets, what it must report, where the answer comes from and the exact prompt.</p>
+        <p class="lead">Tasks come in families: the same kind of part or problem with different shapes, sizes or loads. Every task lists its input, its output values and the metric that decides a pass. Open a task for the formulas, the source and the exact prompt.</p>
       </div>
       <div class="filters" role="search">
         <input id="f-q" type="search" placeholder="Search: bracket, crack, titanium, BT-plate…" aria-label="Search tasks">
@@ -412,7 +418,7 @@ footer .wrap { padding-block: 24px 32px; }
       <div class="head">
         <p class="label">Specs</p>
         <h2>Input, output and metrics for every task</h2>
-        <p class="lead">Every task follows the same contract. The table below gives it per family; open any task above for its own files, values and formulas, or download the full per-task spec.</p>
+        <p class="lead">Every task follows the same contract. The table below gives each task its own input files, output values and pass formulas. It follows the filters in the Tasks section, and you can download it as CSV or JSON.</p>
       </div>
       <div class="spec3">
         <article><p class="label">Input</p><h3>What the model gets</h3><ul>
@@ -430,7 +436,8 @@ footer .wrap { padding-block: 24px 32px; }
           <li><b>Files and review:</b> all required files present, <code>part.step</code> a valid solid, reviewer sign-off on 5 checks.</li>
           <li><b>Pass</b> = numbers pass and workflow verified. Reported as pass rate, numerical pass rate and family-averaged pass rate.</li></ul></article>
       </div>
-      <div class="spec-table"><table><thead><tr><th>Family</th><th>Input</th><th>Output</th><th>Metric</th></tr></thead><tbody id="spec-rows"></tbody></table></div>
+      <p class="count" id="spec-count" style="margin-top:24px"></p>
+      <div class="spec-table"><table><thead><tr><th>Task</th><th>Input</th><th>Output</th><th>Metric</th></tr></thead><tbody id="spec-rows"></tbody></table></div>
       <div class="downloads"><span>Full per-task spec (217 rows, no reference values):</span>
         <a href="https://github.com/ayushdebnath012/cadfem-bench/blob/main/task-specs.csv" target="_blank" rel="noopener">task-specs.csv</a>
         <a href="https://github.com/ayushdebnath012/cadfem-bench/blob/main/task-specs.json" target="_blank" rel="noopener">task-specs.json</a></div>
@@ -589,6 +596,16 @@ python evaluator/sandbox_runner.py replay --package . --job ../job-001 --backend
     ["Calibration", "Calibration", "Standard textbook tests. A correct workflow should pass them; they show the setup works before the hard tasks count."]
   ];
 
+  const inText = t => (t.files.length ? t.files.map(f => f.name).join(", ") : "text only") + (t.track === "B" ? " (builds the CAD)" : "");
+  const metricText = o => o.metric.replace("|answer − reference| / |reference|", "rel. error").replace("|answer − reference| / |reference − 40|", "rel. error from 40 °C");
+  const extraText = t => (t.geometry ? "shape check (solids, volume ±2 %, Hausdorff); " : "") +
+    (t.suite === "buckle-traps" ? `${t.required.length} files` : `${t.required.length} files + review`);
+  function io(t) {
+    return `<dl class="io"><dt>Input</dt><dd>Prompt + ${esc(inText(t))}</dd>
+      <dt>Output</dt><dd>${t.outputs.map(o => `<code>${esc(o.key)}</code>${o.unit ? " [" + esc(o.unit) + "]" : ""}`).join(", ")}</dd>
+      <dt>Metric</dt><dd>${esc([...new Set(t.outputs.map(metricText))].join("; "))}; ${esc(extraText(t))}</dd></dl>`;
+  }
+
   function render() {
     const f = F();
     const hit = D.tasks.filter(t => {
@@ -626,12 +643,17 @@ python evaluator/sandbox_runner.py replay --package . --job ../job-001 --backend
           <p class="story">${esc(fam.story)}</p>
           <p class="refline"><b>Trusted answer:</b> ${esc(fam.ref)}</p>
           <div class="tally" aria-label="GPT-6 Astra results">${["passed", "mixed", "failed", "issue", "none", "untried"].filter(s => tally[s]).map(s => `<span class="pill ${S[s].cls}"><i aria-hidden="true">${S[s].icon}</i>${tally[s]} ${S[s].label.toLowerCase()}</span>`).join("")}</div>
-          <ul class="rows">${shown.map(t => `<li><button type="button" data-id="${esc(t.id)}"><span class="t">${esc(t.plain)}</span><span class="id">${esc(t.id)}</span>${pill(status(t))}</button></li>`).join("")}</ul>
+          <ul class="rows">${shown.map(t => `<li><button type="button" data-id="${esc(t.id)}"><span class="t">${esc(t.plain)}</span><span class="id">${esc(t.id)}</span>${pill(status(t))}${io(t)}</button></li>`).join("")}</ul>
           ${open ? "" : `<button type="button" class="more" data-fam="${esc(fam.id)}">Show all ${ts.length} tasks</button>`}
         </article>`;
       }
       html += `</div></div>`;
     }
+    document.getElementById("spec-count").textContent = `${hit.length} ${hit.length === 1 ? "task" : "tasks"} (follows the filters in Tasks)`;
+    document.getElementById("spec-rows").innerHTML = hit.map(t => `<tr><td><span class="mono" style="font-size:0.74rem">${esc(t.id)}</span><br><span style="font-weight:400;color:var(--ink-2)">${esc(fams[t.family].name)}</span></td>
+      <td>Prompt + ${esc(inText(t))}</td>
+      <td><ul>${t.outputs.map(o => `<li>${esc(o.plain)}${o.unit ? " (" + esc(o.unit) + ")" : ""}<br><code>${esc(o.key)}</code></li>`).join("")}</ul><span style="color:var(--ink-3)">+ ${esc(t.required.join(", "))}</span></td>
+      <td><ul>${t.outputs.map(o => `<li class="formula">${esc(o.metric)}</li>`).join("")}${t.geometry ? `<li>Shape: ${esc(Object.values(t.geometry).join("; "))}</li>` : ""}${t.suite === "buckle-traps" ? "" : "<li>Files present, part.step a valid solid, reviewer sign-off</li>"}</ul><b>Pass:</b> ${esc(t.pass_rule)}</td></tr>`).join("");
     document.getElementById("groups").innerHTML = html || `<div class="empty-state">No task matches these filters. Clear a filter or try another search word.</div>`;
   }
   ["f-q", "f-topic", "f-given", "f-set", "f-astra"].forEach(id => document.getElementById(id).addEventListener("input", render));
@@ -657,22 +679,6 @@ python evaluator/sandbox_runner.py replay --package . --job ../job-001 --backend
     const card = document.getElementById("fam-" + b.dataset.fam);
     if (card) card.scrollIntoView({ behavior: reduce.matches ? "auto" : "smooth", block: "start" });
   });
-
-  /* spec table, one row per family */
-  const uniq = a => [...new Set(a)];
-  document.getElementById("spec-rows").innerHTML = D.families.map(f => {
-    const ts = D.tasks.filter(t => t.family === f.id);
-    const roles = uniq(ts.flatMap(t => t.files.map(x => x.role)));
-    const given = uniq(ts.map(t => t.track === "B" ? "build the CAD from text" : "CAD given"));
-    const outs = uniq(ts.flatMap(t => t.outputs.map(o => o.plain + (o.unit ? ` (${o.unit})` : ""))));
-    const bands = uniq(ts.flatMap(t => t.outputs.map(o => o.tol))).filter(Boolean);
-    const geo = ts.some(t => t.geometry), trap = ts.every(t => t.suite === "buckle-traps");
-    const files = uniq(ts.map(t => t.required.length));
-    return `<tr><td>${esc(f.name)}<br><span class="mono" style="font-size:0.72rem;color:var(--ink-3);font-weight:400">${ts.length} ${ts.length === 1 ? "task" : "tasks"}</span></td>
-      <td>Prompt; ${esc(roles.length ? roles.join(", ") : "no files")}<br><span style="color:var(--ink-3)">${esc(given.join(" / "))}</span></td>
-      <td><ul>${outs.slice(0, 6).map(o => `<li>${esc(o)}</li>`).join("")}${outs.length > 6 ? `<li>and ${outs.length - 6} more</li>` : ""}</ul><span style="color:var(--ink-3)">+ ${files.join(" or ")} files</span></td>
-      <td>Relative error within ${esc(bands.join(", "))}${geo ? "; shape gate" : ""}${trap ? "" : "; files and review"}</td></tr>`;
-  }).join("");
 
   /* task dialog */
   const dlg = document.getElementById("dlg");
