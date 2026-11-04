@@ -1,8 +1,12 @@
-# Can AI Do Engineering Analysis? (CADFEM-Bench website)
+# CADFEM-Bench website
 
 A plain-language guide to [CADFEM-Bench](https://huggingface.co/datasets/Conditiondark/cadfem-bench) v1.9: 217 CAD +
 finite-element tasks for AI models, each phrased as a question, with renders of the real CAD parts, how scoring works and
-GPT-6 Astra's first results. The site shows no reference answers.
+GPT-6 Astra's first results. Worked examples show selected reference answers; task specifications omit them.
+
+Navigation: [Tasks](tasks.html) · [Results](results.html) · [Methodology](methodology.html) · [Run](run.html)
+
+Results are preliminary: 86 failure-seeking tasks with independent repeats on some tasks, not benchmark-wide pass@1. Numerical outcomes, expert-review status, and cost are reported separately.
 
 Live site: https://ayushdebnath012.github.io/cadfem-bench/
 

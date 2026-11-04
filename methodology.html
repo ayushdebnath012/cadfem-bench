@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="CADFEM-Bench: CAD and finite-element simulation tasks, preliminary evaluations, and reproducible engineering evidence."><style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style><title>Methodology · CADFEM-Bench</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: a drafting sheet. Content sits on a ruled sheet, the header rule carries zone ticks, and a title block closes the page. */
+:root {
+  --paper: #F2F4F6; --sheet: #FFFFFF; --ink: #0F1A2A; --ink-2: #485567; --ink-3: #6B7787;
+  --rule: #D3DAE2; --rule-2: #E7ECF1; --accent: #1B56C4; --accent-ink: #FFFFFF; --accent-soft: #E4ECFA;
+  --good: #0CA30C; --warn: #FAB219; --crit: #D03B3B; --neutral: #8C96A4;
+  --mode-neg: #2563C9; --mode-mid: #E8ECF1; --mode-pos: #C8412F;
+  --display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --wrap: 1120px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0C131D; --sheet: #121C29; --ink: #E5EAF0; --ink-2: #A7B2C1; --ink-3: #7E8A9A;
+    --rule: #263347; --rule-2: #1A2534; --accent: #7EA8F4; --accent-ink: #0C131D; --accent-soft: #1A2942;
+    --mode-neg: #5B8DE8; --mode-mid: #2A3546; --mode-pos: #E2705E; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0C131D; --sheet: #121C29; --ink: #E5EAF0; --ink-2: #A7B2C1; --ink-3: #7E8A9A;
+  --rule: #263347; --rule-2: #1A2534; --accent: #7EA8F4; --accent-ink: #0C131D; --accent-soft: #1A2942;
+  --mode-neg: #5B8DE8; --mode-mid: #2A3546; --mode-pos: #E2705E; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: calc(64px + env(safe-area-inset-top, 0px)); }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body { background: var(--paper); color: var(--ink); font: 400 16px/1.6 var(--body); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--sheet); }
+a { color: var(--accent); text-underline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+.wrap { max-width: var(--wrap); margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { font-family: var(--display); font-weight: 600; line-height: 1.05; text-wrap: balance; margin: 0; letter-spacing: 0.005em; }
+h2 { font-size: clamp(2rem, 4.2vw, 2.8rem); }
+h3 { font-size: 1.55rem; }
+p { margin: 0; }
+.label { font: 500 0.72rem/1.2 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+.lead { font-size: 1.1rem; color: var(--ink-2); max-width: 62ch; }
+.mono { font-family: var(--mono); }
+code { font: 0.88em var(--mono); background: var(--rule-2); padding: 0.1em 0.35em; border-radius: 4px; }
+
+/* header */
+.site { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--sheet); border-bottom: 1px solid var(--rule); }
+.site .wrap { display: flex; align-items: center; gap: 24px; min-height: 60px; }
+.brand { display: flex; align-items: baseline; gap: 8px; text-decoration: none; color: var(--ink); flex: none; }
+.brand b { font: 700 1.45rem/1 var(--display); letter-spacing: 0.02em; }
+.brand span { font: 500 0.72rem var(--mono); color: var(--ink-3); }
+.site nav { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; min-width: 0; margin-left: auto; }
+.site nav a { font: 500 0.82rem var(--mono); letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-2); text-decoration: none; padding: 8px 10px; border-radius: 6px; white-space: nowrap; }
+.site nav a:hover { color: var(--ink); background: var(--rule-2); }
+.zones { height: 8px; background: repeating-linear-gradient(90deg, var(--rule) 0 1px, transparent 1px 12.5%); border-bottom: 1px solid var(--rule); }
+
+/* hero */
+.hero .wrap { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr); gap: 48px; align-items: center; padding-block: 56px 40px; }
+.hero h1 { font-size: clamp(2.6rem, 6.4vw, 4.6rem); font-weight: 700; margin-top: 14px; }
+.hero .lead { margin-top: 20px; }
+.cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; font: 600 0.95rem var(--body); padding: 11px 18px; border-radius: 8px; text-decoration: none; border: 1px solid var(--accent); cursor: pointer; }
+.btn.primary { background: var(--accent); color: var(--accent-ink); }
+.btn.ghost { background: transparent; color: var(--accent); }
+.btn:hover { filter: brightness(1.08); }
+.figure { background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; padding: 16px; min-width: 0; }
+.figure canvas { display: block; width: 100%; aspect-ratio: 16 / 10; max-width: 100%; }
+.figure .cap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 16px; align-items: center; margin-top: 10px; }
+.figure .cap p { font-size: 0.84rem; color: var(--ink-2); }
+.legend-bar { display: grid; grid-template-columns: auto 120px auto; align-items: center; gap: 8px; font: 0.72rem var(--mono); color: var(--ink-3); }
+.legend-bar i { height: 8px; border-radius: 2px; background: linear-gradient(90deg, var(--mode-neg), var(--mode-mid), var(--mode-pos)); }
+.stats { border-block: 1px solid var(--rule); background: var(--sheet); }
+.stats dl { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); margin: 0; }
+.stats div { padding: 18px 16px; border-left: 1px solid var(--rule-2); }
+.stats div:first-child { border-left: 0; padding-left: 0; }
+.stats dt { font: 700 2.1rem/1 var(--display); font-variant-numeric: tabular-nums; }
+.stats dd { margin: 6px 0 0; font-size: 0.86rem; color: var(--ink-2); }
+
+/* sections */
+section.block { padding-block: 72px 24px; }
+.head { display: grid; gap: 12px; margin-bottom: 32px; }
+.gloss { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.gloss article { background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px; padding: 20px; display: grid; gap: 8px; align-content: start; }
+.gloss h3 { font-size: 1.4rem; }
+.gloss p { color: var(--ink-2); font-size: 0.95rem; }
+.example { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); gap: 24px; margin-top: 40px; align-items: start; }
+.panel { background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; min-width: 0; }
+.tabs { display: flex; gap: 4px; padding: 8px 8px 0; border-bottom: 1px solid var(--rule); }
+.tabs button { font: 500 0.88rem var(--body); color: var(--ink-2); background: none; border: 0; border-bottom: 2px solid transparent; padding: 10px 12px; cursor: pointer; }
+.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+.tabpanel { padding: 20px; }
+.plain-ex { display: grid; gap: 14px; }
+.plain-ex p { font-size: 1.02rem; }
+.plain-ex .q { border-left: 3px solid var(--accent); padding-left: 14px; font-weight: 500; }
+.ask { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 16px; font-size: 0.92rem; margin: 0; }
+.ask dt { color: var(--ink-3); font: 500 0.76rem/1.9 var(--mono); text-transform: uppercase; letter-spacing: 0.06em; }
+.ask dd { margin: 0; }
+pre.prompt { margin: 0; font: 0.8rem/1.55 var(--mono); white-space: pre-wrap; word-break: break-word; max-height: 420px; overflow: auto; color: var(--ink-2); }
+ol.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; counter-reset: s; }
+ol.steps li { counter-increment: s; display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 12px; padding: 16px 20px; border-top: 1px solid var(--rule-2); }
+ol.steps li:first-child { border-top: 0; }
+ol.steps li::before { content: counter(s); font: 700 1.6rem/1 var(--display); color: var(--accent); }
+ol.steps b { display: block; font-weight: 600; }
+ol.steps span { color: var(--ink-2); font-size: 0.93rem; }
+.note { margin-top: 20px; padding: 16px 20px; background: var(--accent-soft); border-radius: 10px; font-size: 0.95rem; }
+
+/* task explorer */
+.filters { position: sticky; top: calc(60px + env(safe-area-inset-top, 0px)); z-index: 5; background: var(--paper); padding-block: 12px; border-bottom: 1px solid var(--rule); display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.filters input, .filters select { font: 0.9rem var(--body); color: var(--ink); background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; padding: 9px 10px; min-width: 0; }
+.filters input { flex: 1 1 220px; }
+.filters select { flex: 0 1 auto; max-width: 100%; }
+.filters button { font: 500 0.85rem var(--body); color: var(--accent); background: none; border: 0; cursor: pointer; padding: 8px; }
+.count { font: 0.82rem var(--mono); color: var(--ink-3); width: 100%; }
+.group { margin-top: 36px; }
+.group > header { display: grid; gap: 8px; margin-bottom: 16px; }
+.group > header p { color: var(--ink-2); max-width: 75ch; font-size: 0.95rem; }
+.cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.card { background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; padding: 20px; display: grid; gap: 12px; align-content: start; min-width: 0; }
+.card .top { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.card h3 { font-size: 1.45rem; }
+.card .n { font: 0.78rem var(--mono); color: var(--ink-3); white-space: nowrap; }
+.card .story { color: var(--ink-2); font-size: 0.93rem; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font: 500 0.72rem/1 var(--mono); letter-spacing: 0.03em; padding: 5px 8px; border-radius: 999px; border: 1px solid var(--rule); color: var(--ink-2); white-space: nowrap; }
+.refline { font-size: 0.84rem; color: var(--ink-3); }
+.refline b { color: var(--ink-2); font-weight: 500; }
+.rows { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule-2); }
+.rows li + li { border-top: 1px solid var(--rule-2); }
+.rows button { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; align-items: center; text-align: left; background: none; border: 0; padding: 10px 4px; cursor: pointer; color: var(--ink); font: inherit; }
+.rows button:hover { background: var(--rule-2); }
+.rows .t { font-size: 0.92rem; }
+.rows .id { grid-column: 1; font: 0.72rem var(--mono); color: var(--ink-3); overflow-wrap: anywhere; }
+.rows .pill { grid-column: 2; grid-row: 1 / span 2; }
+.more { justify-self: start; font: 500 0.85rem var(--body); color: var(--accent); background: none; border: 0; cursor: pointer; padding: 4px 0; }
+.pill { display: inline-flex; align-items: center; gap: 6px; font: 500 0.74rem/1 var(--body); color: var(--ink-2); white-space: nowrap; }
+.pill i { width: 18px; height: 18px; border-radius: 50%; display: inline-grid; place-items: center; font: 700 0.68rem/1 var(--body); font-style: normal; color: #fff; }
+.pill.good i { background: var(--good); } .pill.crit i { background: var(--crit); } .pill.warn i { background: var(--warn); color: #3a2a00; }
+.pill.neutral i { background: var(--neutral); } .pill.empty i { background: transparent; border: 1.5px dashed var(--rule); }
+.tally { display: flex; flex-wrap: wrap; gap: 6px 14px; }
+.empty-state { padding: 40px 20px; text-align: center; color: var(--ink-2); background: var(--sheet); border: 1px dashed var(--rule); border-radius: 12px; margin-top: 24px; }
+
+/* dialog */
+dialog { width: min(780px, calc(100vw - 32px)); max-height: 86vh; padding: 0; border: 1px solid var(--rule); border-radius: 14px; background: var(--sheet); color: var(--ink); }
+dialog::backdrop { background: rgba(8, 14, 24, 0.55); }
+.dlg { display: grid; gap: 20px; padding: 24px; }
+.dlg header { display: grid; gap: 8px; padding-right: 40px; }
+.dlg h3 { font-size: 1.8rem; }
+.dlg .x { position: absolute; top: 14px; right: 14px; width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--rule); background: var(--sheet); color: var(--ink); font-size: 1.2rem; cursor: pointer; }
+.dlg section { display: grid; gap: 8px; }
+.tbl { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--rule-2); vertical-align: top; }
+th { font: 500 0.72rem var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); }
+td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+details.prompt-box { border: 1px solid var(--rule); border-radius: 10px; }
+details.prompt-box summary { cursor: pointer; padding: 10px 14px; font-weight: 500; }
+details.prompt-box pre { padding: 0 14px 14px; }
+
+/* scoring */
+.checks { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.checks article { background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px; padding: 20px; display: grid; gap: 8px; align-content: start; }
+.checks h3 { font-size: 1.35rem; }
+.checks p { font-size: 0.92rem; color: var(--ink-2); }
+.rule-line { margin-top: 20px; font-size: 1.05rem; }
+
+/* results */
+.board { margin-top: 8px; }
+.board td.empty { padding: 28px 10px; color: var(--ink-2); text-align: center; }
+.viz { margin-top: 40px; background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; padding: 24px; display: grid; gap: 18px; min-width: 0; }
+.viz-legend { display: flex; flex-wrap: wrap; gap: 8px 18px; }
+.bars { display: grid; gap: 10px; position: relative; }
+.bar-row { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 12px; align-items: center; }
+.bar-row .name { font-size: 0.9rem; text-align: right; }
+.track { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.segs { display: flex; gap: 2px; height: 22px; }
+.seg { height: 100%; min-width: 3px; cursor: default; }
+.seg:last-child { border-radius: 0 4px 4px 0; }
+.seg.good { background: var(--good); } .seg.warn { background: var(--warn); } .seg.crit { background: var(--crit); } .seg.neutral { background: var(--neutral); }
+.total { font: 500 0.85rem var(--mono); font-variant-numeric: tabular-nums; color: var(--ink-2); }
+.tip { position: absolute; pointer-events: none; background: var(--ink); color: var(--paper); font: 0.8rem/1.4 var(--body); padding: 6px 10px; border-radius: 6px; white-space: nowrap; transform: translate(-50%, -110%); }
+.mech { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 16px; }
+.mech article { background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px; padding: 20px; display: grid; gap: 6px; align-content: start; }
+.mech b { font: 700 2.6rem/1 var(--display); font-variant-numeric: tabular-nums; }
+.mech p { font-size: 0.92rem; color: var(--ink-2); }
+details.tableview summary { cursor: pointer; font-size: 0.88rem; color: var(--accent); }
+
+/* run + data */
+.run { display: grid; gap: 16px; counter-reset: r; }
+.run li { list-style: none; display: grid; gap: 8px; }
+.run ol { margin: 0; padding: 0; display: grid; gap: 20px; }
+.run li > *, .dlg > *, .dlg section > *, .head > *, .gloss > *, .card > *, .viz > * { min-width: 0; }
+.codebox { position: relative; min-width: 0; background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px; }
+.codebox pre { margin: 0; padding: 14px 92px 14px 16px; font: 0.82rem/1.6 var(--mono); overflow-x: auto; white-space: pre; }
+.codebox button { position: absolute; top: 8px; right: 8px; font: 500 0.78rem var(--body); padding: 6px 10px; border-radius: 6px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); cursor: pointer; }
+.datasets { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.datasets a { display: grid; gap: 8px; background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; padding: 20px; text-decoration: none; color: var(--ink); }
+.datasets a:hover { border-color: var(--accent); }
+.datasets h3 { font-size: 1.5rem; }
+.datasets p { color: var(--ink-2); font-size: 0.93rem; }
+.datasets .mono { color: var(--accent); font-size: 0.8rem; overflow-wrap: anywhere; }
+.fine { margin-top: 20px; font-size: 0.9rem; color: var(--ink-2); max-width: 80ch; }
+div.fine { display: grid; gap: 8px; }
+
+/* title block footer */
+footer { margin-top: 80px; border-top: 1px solid var(--rule); background: var(--sheet); }
+footer .wrap { padding-block: 24px 32px; }
+.titleblock { display: grid; grid-template-columns: 2fr repeat(4, minmax(0, 1fr)); border: 1.5px solid var(--ink); }
+.titleblock div { padding: 8px 12px; border-left: 1px solid var(--ink); display: grid; gap: 2px; min-width: 0; }
+.titleblock div:first-child { border-left: 0; }
+.titleblock b { font: 600 1.1rem var(--display); overflow-wrap: anywhere; }
+.footnote { margin-top: 14px; font: 0.78rem var(--mono); color: var(--ink-3); }
+
+@media (max-width: 900px) {
+  .hero .wrap, .example { grid-template-columns: minmax(0, 1fr); }
+  .checks { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stats dl { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .stats div:nth-child(4) { border-left: 0; padding-left: 0; }
+}
+@media (max-width: 680px) {
+  .gloss, .cards, .mech, .datasets, .checks { grid-template-columns: minmax(0, 1fr); }
+  .stats dl { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stats div { border-left: 0; padding-left: 0; }
+  .bar-row { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+  .bar-row .name { text-align: left; }
+  .titleblock { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .titleblock div { border-left: 0; border-top: 1px solid var(--ink); }
+  .titleblock div:first-child { grid-column: 1 / -1; border-top: 0; }
+  .titleblock div:nth-child(odd):not(:first-child) { border-left: 1px solid var(--ink); }
+  .site .wrap { gap: 8px; }
+  section.block { padding-block: 56px 16px; }
+}
+/* CAD pictures */
+.shot { position: relative; background: var(--paper); border-radius: 8px; aspect-ratio: 64 / 42; overflow: hidden; }
+.shot img { position: absolute; inset: 6px; width: calc(100% - 12px); height: calc(100% - 12px); max-width: none; object-fit: contain; display: block; }
+.card .shot { aspect-ratio: auto; height: 190px; }
+.dlg .shot { aspect-ratio: auto; height: 220px; }
+.shot-cap { font: 0.72rem var(--mono); color: var(--ink-3); margin-top: -4px; overflow-wrap: anywhere; }
+.gallery { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.gallery button { display: grid; gap: 8px; text-align: left; background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; padding: 12px; cursor: pointer; color: var(--ink); font: inherit; min-width: 0; }
+.gallery button:hover { border-color: var(--accent); }
+.gallery b { font: 600 1.15rem/1.1 var(--display); }
+.gallery span { font-size: 0.82rem; color: var(--ink-2); }
+.pipeline { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 8px; }
+.pipeline figure { margin: 0; background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; padding: 14px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+.pipeline figcaption { font-size: 0.9rem; color: var(--ink-2); display: grid; gap: 4px; }
+.pipeline figcaption b { color: var(--ink); font: 600 1.2rem/1.1 var(--display); }
+.ramp { display: grid; grid-template-columns: auto minmax(60px, 140px) auto; gap: 8px; align-items: center; font: 0.72rem var(--mono); color: var(--ink-3); }
+.ramp i { height: 8px; border-radius: 2px; background: linear-gradient(90deg, #E4EEFC, #86B6EF, #2A78D6, #104281, #0D2F5A); }
+.flow { margin-top: 56px; display: grid; gap: 16px; }
+@media (max-width: 900px) { .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 680px) { .pipeline { grid-template-columns: minmax(0, 1fr); } }
+/* specs */
+.io { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 2px 10px; margin: 6px 0 2px; grid-column: 1 / -1; font-size: 0.78rem; color: var(--ink-2); }
+.io dt { font: 500 0.66rem/1.7 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); }
+.io dd { margin: 0; overflow-wrap: anywhere; }
+.io code { font-size: 0.74rem; }
+.casechip { grid-column: 1 / -1; justify-self: start; margin-top: 4px; font: 500 0.74rem var(--body); color: var(--accent); border: 1px solid var(--accent); border-radius: 999px; padding: 3px 10px; }
+.spec-table { max-height: 75vh; overflow: auto; }
+.spec-table thead th { position: sticky; top: 0; background: var(--sheet); z-index: 1; }
+.spec3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.spec3 article { background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px; padding: 20px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.spec3 h3 { font-size: 1.4rem; }
+.spec3 ul { margin: 0; padding-left: 18px; color: var(--ink-2); font-size: 0.92rem; display: grid; gap: 4px; }
+.spec-table { margin-top: 8px; background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; overflow-x: auto; }
+.spec-table table { min-width: 860px; font-size: 0.86rem; }
+.spec-table td:first-child { font-weight: 600; min-width: 150px; }
+.spec-table td ul { margin: 0; padding-left: 16px; }
+.downloads { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; align-items: center; font-size: 0.92rem; }
+.formula { font: 0.8rem var(--mono); color: var(--ink-2); }
+@media (max-width: 900px) { .spec3 { grid-template-columns: minmax(0, 1fr); } }
+/* flow */
+.flowline { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; margin: 8px 0 0; padding: 0; }
+.flowline li { list-style: none; background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px; padding: 14px; display: grid; gap: 6px; align-content: start; position: relative; min-width: 0; }
+.flowline li.solve { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.flowline li.eval { background: var(--accent-soft); }
+.flowline b { font: 600 1.15rem/1.1 var(--display); }
+.flowline span { font-size: 0.84rem; color: var(--ink-2); }
+.flowline small { font: 500 0.66rem var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); }
+.flowline ol { margin: 0; padding: 0; display: contents; }
+@media (max-width: 900px) { .flowline { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+pre.json { margin: 0; padding: 12px 14px; background: var(--paper); border-radius: 8px; font: 0.8rem/1.6 var(--mono); overflow-x: auto; white-space: pre; }
+pre.json .c { color: var(--ink-3); }
+.dlg ol.flowsteps { margin: 0; padding-left: 20px; display: grid; gap: 6px; font-size: 0.92rem; }
+.dlg ol.flowsteps li.solve { font-weight: 500; }
+
+/* Compact editorial layout shared by the benchmark and documentation. */
+:root { --display: "IBM Plex Sans", system-ui, sans-serif; }
+h1,h2,h3 { letter-spacing:-0.025em; line-height:1.2; }
+h2 { font-size:clamp(1.5rem,3vw,2rem); } h3 { font-size:1.15rem; }
+.hero .wrap { display:block; padding-block:48px 32px; }
+.hero h1 { font-size:clamp(2.1rem,5vw,3rem); margin-top:12px; }
+.hero .lead { max-width:72ch; margin-top:16px; }
+section.block { padding-block:32px; border-top:1px solid var(--rule); }
+.head { gap:10px; margin-bottom:22px; }
+.head .lead { max-width:85ch; font-size:1rem; }
+.pipeline { grid-template-columns:repeat(3,minmax(0,1fr)); }
+.pipeline figure { margin:0; min-width:0; background:transparent; border:0; border-radius:0; padding:0; }
+.pipeline .shot { aspect-ratio: 4 / 3; }
+.pipeline svg { display:block; width:100%; height:auto; background:white; }
+.pipeline figcaption { font-size:.88rem; margin-top:12px; color:var(--ink-2); }
+.pipeline figcaption b { display:block; color:var(--ink); margin-bottom:4px; }
+.summary { margin-top:22px; }
+.summary table { width:100%; }
+.checks article,.gloss article,.spec3 article { background:transparent; border:0; border-radius:0; padding:12px 0; }
+.checks { gap:24px; } .datasets a { border-radius:0; }
+footer { margin-top:32px; } .footer-links { display:flex; flex-wrap:wrap; gap:12px 24px; padding-block:24px; }
+.doc-intro { padding-block:32px; } .doc-intro h1 { font-size:2rem; margin-bottom:12px; }
+@media(max-width:650px) { .site .wrap { flex-wrap:wrap; gap:8px; padding-block:12px; } .site nav { margin-left:0; width:100%; justify-content:space-between; } .site nav a { padding:6px 4px; font-size:.75rem; } .pipeline { grid-template-columns:1fr; } .hero .wrap { padding-block:32px; } }
+</style></head><body>
+<header class="site"><div class="wrap"><a class="brand" href="index.html"><b>CADFEM-Bench</b><span>v1.9</span></a><nav aria-label="Main navigation"><a href="tasks.html">Tasks</a><a href="results.html">Results</a><a href="methodology.html">Methodology</a><a href="run.html">Run</a></nav></div></header><main id="top"><div class="wrap doc-intro"><h1>Methodology</h1></div><section class="block" id="how"><div class="wrap"><div class="head"><h2>Evaluation protocol</h2><p class="lead">A model receives a task specification and, where supplied, CAD geometry. It submits a Python program that constructs the mesh, runs a simulation and writes the requested values and evidence. The evaluator replays the program offline and checks the outputs against held-out references.</p></div>      <div class="gloss">
+        <article><p class="label">CAD</p><h3>The shape</h3><p>A 3D model of a part, like the file an engineer sends to a 3D printer or a machine shop. We use the STEP format, which any CAD program can open.</p></article>
+        <article><p class="label">FEM</p><h3>The simulation</h3><p>The finite element method cuts the shape into thousands of tiny pieces (a mesh) and solves the physics on every piece. It is how engineers check a part before anyone builds it.</p></article>
+        <article><p class="label">Reference</p><h3>The trusted answer</h3><p>Each task has an answer the model never sees. It comes with the real CAD design, collected from the web (open engineering projects, CAD datasets and solver test suites), or is computed by us and checked on three meshes.</p></article>
+      </div><p class="note">The single-shot protocol permits one model call and one submitted program per task. Exploratory independent trials are reported separately and never pooled into pass@1. Agentic runs with tools or feedback must also be reported separately.</p><p><a href="worked-example.html">Fourteen-step worked tutorial</a> · <a href="worked-example-failed.html">A failed model run, step by step</a></p></div></section>  <section class="block" id="scoring">
+    <div class="wrap">
+      <div class="head">
+        <p class="label">Grading</p>
+        <h2>Four checks, scored separately</h2>
+        <p class="lead">Getting a number right is not enough on its own. A model could guess or copy a known answer, so the files behind the number are checked too.</p>
+      </div>
+      <div class="checks">
+        <article><p class="label">1 · Numbers</p><h3>Right answer</h3><p>Every requested value is a real number inside its pass band. Bands are usually 5 % or 10 %; values read off a published colour plot get 20 %.</p></article>
+        <article><p class="label">2 · Files</p><h3>Real work</h3><p>The program, the exported shape, the mesh, the result fields, the solver log, a refinement record and the software versions must all be there.</p></article>
+        <article><p class="label">Shape</p><h3>Right part</h3><p>When the model builds the CAD itself, an automatic check compares it with ours: same number of solids, volume within 2 %, surfaces within 0.5 mm. Expert human annotators then verify its features, regions and the faces used for supports and loads.</p></article>
+        <article><p class="label">4 · Review</p><h3>Honest setup</h3><p>Expert human annotators, who do not know which model wrote the code, verify the CAD and sign off the supports, loads, mesh and convergence against the file hashes.</p></article>
+      </div>
+      <p class="rule-line">A task <b>passes</b> only when the numbers are right and the expert human annotators sign off. Results are reported separately for tasks that give the CAD and tasks that need the model to build it, and runs with tools or feedback are reported apart from single-shot runs.</p>
+      <p class="fine">Like dense-reward benchmarks, we also report partial credit: the <b>numerical score</b> is the fraction of a task's values inside their bands (0, ½ or 1 for a two-value task), so near-misses are visible, not just pass or fail.</p>
+    </div>
+  </section>  <section class="block" id="dataset">
+    <div class="wrap">
+      <div class="head">
+        <p class="label">Dataset construction</p>
+        <h2>Where the tasks and answers come from</h2>
+        <p class="lead">Tasks are built from real CAD designs and their FEM results collected from the web, plus a family of generated buckling tasks. Every task is checked before it is admitted.</p>
+      </div>
+      <div class="spec3">
+        <article><p class="label">Sources</p><h3>Collected from the web</h3><ul>
+          <li>Open CAD datasets: GE jet-engine bracket designs (SimJEB), AgentFEM brackets, GeoPINONet holed plates, CADWorld.</li>
+          <li>Open engineering projects: a 3D-printable cycloidal gearbox, a rigging plate, morphing-wing test plates.</li>
+          <li>Solver test suites: Code_Aster validation tests, the fcVM FreeCAD workbench, FeenoX, NAFEMS benchmarks, Wolfram FEM tests.</li>
+          <li>Generated: 82 buckling traps (100 built, 18 held back).</li></ul></article>
+        <article><p class="label">Answers</p><h3>One trusted answer per value</h3><ul>
+          <li>Main set (135 values): 85 from the source's results tables, 24 from its result files, 12 exact formulas, 5 read from stress plots, 4 from the source's own checker, 4 from another solver, 1 from the source's model.</li>
+          <li>Buckling traps: computed by us with quadratic elements and an eigen-solver that cannot skip modes, on three meshes, with a closed-form check where one exists.</li>
+          <li>No answer is ever shown to the model.</li></ul></article>
+        <article><p class="label">Validation</p><h3>Checked before admission</h3><ul>
+          <li>17 of the 64 main-set answers reproduced with an independent FEM model; the <a href="worked-example.html">worked example</a> adds one more.</li>
+          <li>Buckling traps admitted only if three meshes agree and the trap holds: 18 of 100 were held back (10 differed from the closed-form value by more than 3 %, and 8 perforated strips did not pass admission).</li>
+          <li>Six task defects found during model runs (a wrong prompt detail, a reference from a simpler model, a drawing never attached) are marked and not counted against any model.</li>
+          <li>Difficulty labels (easy or hard) will be set from the mean score once three or more models are run.</li></ul></article>
+      </div>
+    </div>
+  </section>  <section class="block" id="experiments">
+    <div class="wrap">
+      <div class="head">
+        <p class="label">Experiments</p>
+        <h2>Harness, models and metrics</h2>
+      </div>
+      <div class="spec3">
+        <article><p class="label">Harness</p><h3>One program, one replay</h3><ul>
+          <li><b>Single shot:</b> one model call per task returns <code>main.py</code>; no tools, no feedback.</li>
+          <li><b>Agentic</b> (reported separately): the model may run code and read errors before submitting.</li>
+          <li>Every submission is replayed once by <code>sandbox_runner.py</code>: offline, read-only inputs, 600 s, 8 GiB, 2 threads, with CadQuery, Gmsh, NumPy/SciPy, meshio, scikit-fem and CalculiX 2.23.</li></ul></article>
+        <article><p class="label">Evaluation scope</p><h3>Exploratory subset</h3><p>GPT-6 Astra has recorded trials on 86 tasks selected to expose failure modes. Some tasks were tried independently more than once. A benchmark pass@1 comparison requires a fixed task set and one submission per task; the exploratory counts do not meet that reporting protocol.</p></article>
+        <article><p class="label">Metrics</p><h3>What we report</h3><ul>
+          <li><b>Pass@1:</b> share of tasks with every value in band and the expert review signed off.</li>
+          <li><b>Numerical pass@1:</b> share with every value in band.</li>
+          <li><b>Numerical score:</b> mean share of values in band (partial credit).</li>
+          <li>Family-averaged pass rate, cost and tokens per task, and failure type (no answer, wrong value, refused), which does not depend on any band.</li></ul></article>
+      </div>
+    </div>
+  </section>  <section class="block" id="data">
+    <div class="wrap">
+      <div class="head">
+        <p class="label">Data</p>
+        <h2>Get the data</h2>
+      </div>
+      <div class="datasets">
+        <a href="https://huggingface.co/datasets/Conditiondark/cadfem-bench" target="_blank" rel="noopener"><p class="label">Full benchmark</p><h3>CADFEM-Bench v1.9</h3><p>All 217 tasks, CAD files, references and their evidence, the sandbox and the scorer. 3,221 files, every one checksummed.</p><span class="mono">huggingface.co/datasets/Conditiondark/cadfem-bench</span></a>
+        <a href="https://huggingface.co/datasets/Conditiondark/astra-cadfem-failures" target="_blank" rel="noopener"><p class="label">Failure study</p><h3>GPT-6 Astra failures</h3><p>The 51 tasks Astra failed every time, with its code, its solver files, our verdict and the rerun that confirms each wrong answer.</p><span class="mono">huggingface.co/datasets/Conditiondark/astra-cadfem-failures</span></a>
+      </div>
+      <div class="fine">
+        <p><b>Limits.</b> The references are public, so a model trained after October 2026 may have seen them. 17 of the 64 main-set references have been reproduced independently, and most pass bands are still provisional. The buckling traps all test one solver behaviour.</p>
+        <p><b>Licences.</b> Each task keeps its source's terms, listed with the task. Material made for this benchmark (the buckling traps, prompts, records and scripts) is CC BY 4.0.</p>
+        <p><b>Please keep these tasks and answers out of training data.</b></p>
+      </div>
+    </div>
+  </section></main><footer><div class="wrap"><div class="footer-links"><a href="https://github.com/ayushdebnath012/cadfem-bench">Code</a><a href="https://huggingface.co/datasets/Conditiondark/cadfem-bench">Data &amp; references</a><a href="methodology.html">Methodology</a><a href="run.html">Run instructions</a><a href="worked-example.html">Worked tutorial</a></div><p class="fine">CADFEM-Bench v1.9 · 217 tasks · Evaluation snapshot: 30 October 2026. Please keep benchmark tasks and answers out of training data.</p></div></footer></body></html>
