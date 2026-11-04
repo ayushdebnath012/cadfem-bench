@@ -6,7 +6,7 @@ GPT-6 Astra's first results. Worked examples show selected reference answers; ta
 
 Navigation: [Tasks](tasks.html) · [Results](results.html) · [Methodology](methodology.html) · [Run](run.html)
 
-Results are preliminary: 86 failure-seeking tasks with independent repeats on some tasks, not benchmark-wide pass@1. Numerical outcomes, expert-review status, and cost are reported separately.
+Results are preliminary. Qwen3-235B-A22B ran all 64 main-set tasks once each (agentic): 0 / 64 numerical passes ([per-task outcomes](results/qwen3-235b-a22b-main-v1.9.json)). GPT-6 Astra ran on 86 failure-seeking tasks with independent repeats on some tasks, which is not pass@1. Numerical outcomes, expert-review status, and cost are reported separately.
 
 Live site: https://ayushdebnath012.github.io/cadfem-bench/
 

@@ -405,9 +405,9 @@ footer { margin-top:32px; } .footer-links { display:flex; flex-wrap:wrap; gap:12
       <div class="spec3">
         <article><p class="label">Harness</p><h3>One program, one replay</h3><ul>
           <li><b>Single shot:</b> one model call per task returns <code>main.py</code>; no tools, no feedback.</li>
-          <li><b>Agentic</b> (reported separately): the model may run code and read errors before submitting.</li>
+          <li><b>Agentic</b> (reported separately): the model may run code and read errors, then submits once; at most 250 tool calls, 45 minutes of command time and 180 minutes per task.</li>
           <li>Every submission is replayed once by <code>sandbox_runner.py</code>: offline, read-only inputs, 600 s, 8 GiB, 2 threads, with CadQuery, Gmsh, NumPy/SciPy, meshio, scikit-fem and CalculiX 2.23.</li></ul></article>
-        <article><p class="label">Evaluation scope</p><h3>Exploratory subset</h3><p>GPT-6 Astra has recorded trials on 86 tasks selected to expose failure modes. Some tasks were tried independently more than once. A benchmark pass@1 comparison requires a fixed task set and one submission per task; the exploratory counts do not meet that reporting protocol.</p></article>
+        <article><p class="label">Evaluation scope</p><h3>What has been run</h3><p><b>Qwen3-235B-A22B:</b> all 64 main-set tasks, one agentic submission each. Its result is numerical pass@1 for the main set.</p><p><b>GPT-6 Astra:</b> single-shot trials on 86 tasks chosen to expose failure modes. Some tasks were tried more than once, so these counts are not pass@1.</p></article>
         <article><p class="label">Metrics</p><h3>What we report</h3><ul>
           <li><b>Pass@1:</b> share of tasks with every value in band and the expert review signed off.</li>
           <li><b>Numerical pass@1:</b> share with every value in band.</li>
@@ -431,4 +431,4 @@ footer { margin-top:32px; } .footer-links { display:flex; flex-wrap:wrap; gap:12
         <p><b>Please keep these tasks and answers out of training data.</b></p>
       </div>
     </div>
-  </section></main><footer><div class="wrap"><div class="footer-links"><a href="https://github.com/ayushdebnath012/cadfem-bench">Code</a><a href="https://huggingface.co/datasets/Conditiondark/cadfem-bench">Data &amp; references</a><a href="methodology.html">Methodology</a><a href="run.html">Run instructions</a><a href="worked-example.html">Worked tutorial</a></div><p class="fine">CADFEM-Bench v1.9 · 217 tasks · Evaluation snapshot: 30 October 2026. Please keep benchmark tasks and answers out of training data.</p></div></footer></body></html>
+  </section></main><footer><div class="wrap"><div class="footer-links"><a href="https://github.com/ayushdebnath012/cadfem-bench">Code</a><a href="https://huggingface.co/datasets/Conditiondark/cadfem-bench">Data &amp; references</a><a href="methodology.html">Methodology</a><a href="run.html">Run instructions</a><a href="worked-example.html">Worked tutorial</a></div><p class="fine">CADFEM-Bench v1.9 · 217 tasks · Updated 4 November 2026. Please keep benchmark tasks and answers out of training data.</p></div></footer></body></html>

@@ -312,6 +312,16 @@ section.block { padding-block:32px; border-top:1px solid var(--rule); }
 footer { margin-top:32px; } .footer-links { display:flex; flex-wrap:wrap; gap:12px 24px; padding-block:24px; }
 .doc-intro { padding-block:32px; } .doc-intro h1 { font-size:2rem; margin-bottom:12px; }
 @media(max-width:650px) { .site .wrap { flex-wrap:wrap; gap:8px; padding-block:12px; } .site nav { margin-left:0; width:100%; justify-content:space-between; } .site nav a { padding:6px 4px; font-size:.75rem; } .pipeline,.checks { grid-template-columns:1fr; } .hero .wrap { padding-block:32px; } }
+
+@media (max-width: 680px) {
+  .tbl.models { overflow: visible; }
+  .tbl.models thead { display: none; }
+  .tbl.models table, .tbl.models tbody, .tbl.models tr, .tbl.models td { display: block; width: auto; }
+  .tbl.models tr { padding: 12px 0; border-bottom: 1px solid var(--rule); }
+  .tbl.models td { border: 0; padding: 3px 0; }
+  .tbl.models td[data-label]::before { content: attr(data-label) ": "; font-weight: 600; }
+  .tbl.models td:first-child::before { content: none; }
+}
 </style>
 <style>
 .case-hero .wrap { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: 40px; align-items: center; padding-block: 48px 32px; }
