@@ -308,8 +308,51 @@ section.block { padding-block:32px; border-top:1px solid var(--rule); }
 footer { margin-top:32px; } .footer-links { display:flex; flex-wrap:wrap; gap:12px 24px; padding-block:24px; }
 .doc-intro { padding-block:32px; } .doc-intro h1 { font-size:2rem; margin-bottom:12px; }
 @media(max-width:650px) { .site .wrap { flex-wrap:wrap; gap:8px; padding-block:12px; } .site nav { margin-left:0; width:100%; justify-content:space-between; } .site nav a { padding:6px 4px; font-size:.75rem; } .pipeline { grid-template-columns:1fr; } .hero .wrap { padding-block:32px; } }
-</style></head><body>
-<header class="site"><div class="wrap"><a class="brand" href="index.html"><b>CADFEM-Bench</b><span>v1.9</span></a><nav aria-label="Main navigation"><a href="tasks.html">Tasks</a><a href="results.html">Results</a><a href="methodology.html">Methodology</a><a href="run.html">Run</a></nav></div></header><main id="top"><div class="wrap doc-intro"><h1>Tasks</h1></div>  <section class="block" id="tasks">
+</style><style id="theme-controls">
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
+.theme-toggle { flex:none; margin-left:auto; border:1px solid var(--rule); border-radius:6px; padding:8px 12px; background:var(--sheet); color:var(--ink); font:500 .8rem var(--body); cursor:pointer; white-space:nowrap; }
+.theme-toggle:hover { background:var(--rule-2); }
+.site .theme-toggle + nav { margin-left:0; }
+@media(max-width:650px) { .theme-toggle { padding:7px 10px; } }
+</style>
+<script id="theme-script">
+(function () {
+  const key = 'cadfem-theme';
+  const root = document.documentElement;
+  const system = window.matchMedia('(prefers-color-scheme: dark)');
+  let preference = null;
+  try { preference = localStorage.getItem(key); } catch (_) {}
+  if (preference !== 'light' && preference !== 'dark') preference = null;
+  function apply() {
+    const theme = preference || (system.matches ? 'dark' : 'light');
+    root.dataset.theme = theme;
+    const button = document.getElementById('theme-toggle');
+    if (button) {
+      const next = theme === 'dark' ? 'light' : 'dark';
+      button.textContent = next === 'dark' ? '☾ Dark mode' : '☀ Light mode';
+      button.setAttribute('aria-label', 'Switch to ' + next + ' mode');
+      button.title = 'Switch to ' + next + ' mode';
+      button.hidden = false;
+    }
+  }
+  // Apply the saved preference before the page paints.
+  apply();
+  document.addEventListener('DOMContentLoaded', function () {
+    const button = document.getElementById('theme-toggle');
+    if (!button) return;
+    button.addEventListener('click', function () {
+      preference = root.dataset.theme === 'dark' ? 'light' : 'dark';
+      try { localStorage.setItem(key, preference); } catch (_) {}
+      apply();
+    });
+    apply();
+  });
+  system.addEventListener('change', function () { if (!preference) apply(); });
+})();
+</script>
+</head><body>
+<header class="site"><div class="wrap"><a class="brand" href="index.html"><b>CADFEM-Bench</b><span>v1.9</span></a><button id="theme-toggle" class="theme-toggle" type="button" hidden>Dark mode</button><nav aria-label="Main navigation"><a href="tasks.html">Tasks</a><a href="results.html">Results</a><a href="methodology.html">Methodology</a><a href="run.html">Run</a></nav></div></header><main id="top"><div class="wrap doc-intro"><h1>Tasks</h1></div>  <section class="block" id="tasks">
     <div class="wrap">
       <div class="head">
         <p class="label">List of tasks</p>
