@@ -1,6 +1,6 @@
 # CADFEM-Bench website
 
-A plain-language guide to [CADFEM-Bench](https://huggingface.co/datasets/Conditiondark/cadfem-bench) v1.9: 217 CAD +
+A plain-language guide to [CADFEM-Bench](https://huggingface.co/datasets/Conditiondark/cadfem-bench): 217 CAD +
 finite-element tasks for AI models, each phrased as a question, with renders of the real CAD parts, how scoring works and
 GPT-6 Astra's first results. Worked examples show selected reference answers; task specifications omit them.
 

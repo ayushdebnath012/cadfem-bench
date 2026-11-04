@@ -1,4 +1,4 @@
-# CADFEM-Bench v1.9 task specs
+# CADFEM-Bench task specs
 
 One page per task: overview, flow, input, output, evaluation. Reference values are not included.
 
