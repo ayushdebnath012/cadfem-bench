@@ -589,6 +589,9 @@ ${t.outputs.map((o, i) => `    "${esc(o.key)}": &lt;number&gt;${i < t.outputs.le
   dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
 
   render();
+  /* tasks.html#<task id> opens that task (linked from the Results page) */
+  const fromHash = () => { const t = byId[decodeURIComponent(location.hash.slice(1))]; if (t) openTask(t); };
+  fromHash(); addEventListener("hashchange", fromHash);
   }
   if (document.getElementById("bars")) {
   /* Astra chart */
